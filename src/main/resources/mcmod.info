@@ -1,0 +1,16 @@
+[
+{
+  "modid": "vivecraftforgeextensions",
+  "name": "Vivecraft Forge Extensions",
+  "description": "Forge companion mod for Vivecraft which handles packets and modifies base code for VR players.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Techjar"],
+  "credits": "huh?",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
