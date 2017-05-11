@@ -38,9 +38,9 @@ public class PacketVersion implements IPacket {
 	@Override
 	public void handleServer(EntityPlayerMP player) {
 		VivecraftForgeLog.info("Player joined: %s", message);
-		VivecraftForge.packetPipeline.sendToPlayer(new PacketVersion(VivecraftForge.MOD_NAME + " " + VivecraftForge.MOD_VERSION), player);
-		VivecraftForge.packetPipeline.sendToPlayer(new PacketRequestData(), player);
-		VivecraftForge.packetPipeline.sendToPlayer(new PacketClimbing(), player);
+		VivecraftForge.packetPipeline.sendTo(new PacketVersion(VivecraftForge.MOD_NAME + " " + VivecraftForge.MOD_VERSION), player);
+		VivecraftForge.packetPipeline.sendTo(new PacketRequestData(), player);
+		VivecraftForge.packetPipeline.sendTo(new PacketClimbing(), player);
 
 		// TODO: parse version string
 	}

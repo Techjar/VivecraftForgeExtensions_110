@@ -2,7 +2,7 @@ package com.techjar.vivecraftforge;
 
 import net.minecraftforge.common.config.Configuration;
 
-import com.techjar.vivecraftforge.network.VivecraftForgeChannelHandler;
+import com.techjar.vivecraftforge.network.ChannelHandler;
 import com.techjar.vivecraftforge.proxy.ProxyCommon;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -22,7 +22,7 @@ public class VivecraftForge {
 	@SidedProxy(clientSide = "com.techjar.vivecraftforge.proxy.ProxyClient", serverSide = "com.techjar.vivecraftforge.proxy.ProxyServer")
 	public static ProxyCommon proxy;
 	
-	public static VivecraftForgeChannelHandler packetPipeline;
+	public static ChannelHandler packetPipeline;
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {

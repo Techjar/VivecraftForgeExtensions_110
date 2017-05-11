@@ -17,7 +17,7 @@ public class VivecraftForgeCore extends DummyModContainer {
 		meta.credits = "blah";
 		meta.authorList = Arrays.asList("Techjar");
 		meta.description = "";
-		meta.url = "";
+		meta.url = "https://github.com/Techjar/VivecraftForgeExtensions_110";
 		meta.screenshots = new String[0];
 		meta.logoFile = "";
 	}

@@ -10,11 +10,4 @@ public class ProxyCommon {
 	
 	public void registerNetwork() {
 	}
-
-	public EntityPlayer getPlayerFromNetHandler(INetHandler netHandler) {
-		if (netHandler instanceof NetHandlerPlayServer) {
-			return ((NetHandlerPlayServer)netHandler).playerEntity;
-		}
-		return null;
-	}
 }

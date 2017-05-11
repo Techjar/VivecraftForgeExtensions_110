@@ -1,23 +1,27 @@
 package com.techjar.vivecraftforge.network;
 
+import com.techjar.vivecraftforge.util.VivecraftForgeLog;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 
 import com.techjar.vivecraftforge.network.packet.*;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
 import net.minecraftforge.fml.common.network.FMLIndexedMessageToMessageCodec;
 import net.minecraftforge.fml.common.network.FMLOutboundHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.EnumMap;
 
-public class VivecraftForgeChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
+public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
 	private EnumMap<Side, FMLEmbeddedChannel> channels;
+	SimpleNetworkWrapper network;
 
-	private VivecraftForgeChannelHandler() {
+	private ChannelHandler() {
 		this.addDiscriminator(0, PacketVersion.class);
 		this.addDiscriminator(1, PacketRequestData.class);
 		this.addDiscriminator(2, PacketHeadData.class);
@@ -31,15 +35,23 @@ public class VivecraftForgeChannelHandler extends FMLIndexedMessageToMessageCode
 		this.addDiscriminator(10, PacketClimbing.class);
 	}
 
-	public static VivecraftForgeChannelHandler init() {
-		VivecraftForgeChannelHandler channelHandler = new VivecraftForgeChannelHandler();
-		channelHandler.channels = NetworkRegistry.INSTANCE.newChannel("Vivecraft", channelHandler, new VivecraftForgePacketHandler());
+	public static ChannelHandler init() {
+		ChannelHandler channelHandler = new ChannelHandler();
+		channelHandler.channels = NetworkRegistry.INSTANCE.newChannel("Vivecraft", channelHandler, new PacketHandlerServer());
+		if (FMLCommonHandler.instance().getSide().isClient()) {
+			FMLEmbeddedChannel channel = channelHandler.channels.get(Side.CLIENT);
+			String codec = channel.findChannelHandlerNameForType(ChannelHandler.class);
+			channel.pipeline().addAfter(codec, "ClientHandler", new PacketHandlerClient());
+		}
+		channelHandler.network = NetworkRegistry.INSTANCE.newSimpleChannel("Vivecraft2");
+		channelHandler.network.
 		return channelHandler;
 	}
 
 	@Override
 	public void encodeInto(ChannelHandlerContext ctx, IPacket msg, ByteBuf target) throws Exception {
 		msg.encodePacket(ctx, target);
+		VivecraftForgeLog.info("Encoded packet: %s", msg.getClass().getName());
 	}
 
 	@Override
@@ -49,29 +61,29 @@ public class VivecraftForgeChannelHandler extends FMLIndexedMessageToMessageCode
 
 	public void sendToAll(IPacket message) {
 		this.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
-		this.channels.get(Side.SERVER).writeOutbound(message);
+		this.channels.get(Side.SERVER).writeAndFlush(message);
 	}
 
-	public void sendToPlayer(IPacket message, EntityPlayerMP player) {
+	public void sendTo(IPacket message, EntityPlayerMP player) {
 		this.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
 		this.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player);
-		this.channels.get(Side.SERVER).writeOutbound(message);
+		this.channels.get(Side.SERVER).writeAndFlush(message);
 	}
 
 	public void sendToAllAround(IPacket message, NetworkRegistry.TargetPoint point) {
 		this.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
 		this.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(point);
-		this.channels.get(Side.SERVER).writeOutbound(message);
+		this.channels.get(Side.SERVER).writeAndFlush(message);
 	}
 
 	public void sendToDimension(IPacket message, int dimensionId) {
 		this.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.DIMENSION);
 		this.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(dimensionId);
-		this.channels.get(Side.SERVER).writeOutbound(message);
+		this.channels.get(Side.SERVER).writeAndFlush(message);
 	}
 
 	public void sendToServer(IPacket message) {
 		this.channels.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
-		this.channels.get(Side.CLIENT).writeOutbound(message);
+		this.channels.get(Side.CLIENT).writeAndFlush(message);
 	}
 }

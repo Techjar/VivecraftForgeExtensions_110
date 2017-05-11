@@ -9,26 +9,17 @@ import net.minecraft.network.INetHandler;
 
 import com.techjar.vivecraftforge.VivecraftForge;
 import com.techjar.vivecraftforge.util.VivecraftForgeLog;
+import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 @Sharable
-public class VivecraftForgePacketHandler extends SimpleChannelInboundHandler<IPacket> {
+public class PacketHandlerServer extends SimpleChannelInboundHandler<IPacket> {
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, IPacket msg) throws Exception {
-		INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
-		EntityPlayer player = VivecraftForge.proxy.getPlayerFromNetHandler(netHandler);
-
-		switch (FMLCommonHandler.instance().getEffectiveSide()) {
-			case CLIENT:
-				VivecraftForgeLog.severe("Should never receive packet on client!");
-				break;
-			case SERVER:
-				msg.handleServer((EntityPlayerMP)player);
-				break;
-			default:
-				VivecraftForgeLog.severe("Impossible scenario encountered! Effective side is neither server nor client!");
-				break;
-		}
+		if (ctx.channel().attr(NetworkRegistry.CHANNEL_SOURCE).get() != Side.SERVER) return;
+		EntityPlayerMP player = ((NetHandlerPlayServer)ctx.channel().attr(NetworkRegistry.NET_HANDLER).get()).playerEntity;
+		msg.handleServer(player);
 	}
 }
