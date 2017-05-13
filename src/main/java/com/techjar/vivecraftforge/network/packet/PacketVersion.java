@@ -1,6 +1,7 @@
 package com.techjar.vivecraftforge.network.packet;
 
 import com.google.common.base.Charsets;
+import com.techjar.vivecraftforge.Config;
 import com.techjar.vivecraftforge.VivecraftForge;
 import com.techjar.vivecraftforge.network.IPacket;
 import com.techjar.vivecraftforge.util.PlayerTracker;
@@ -51,7 +52,7 @@ public class PacketVersion implements IPacket {
 		if (!message.contains("NONVR")) {
 			VivecraftForge.packetPipeline.sendTo(new PacketRequestData(), player);
 			VivecraftForge.packetPipeline.sendTo(new PacketTeleport(), player);
-			//VivecraftForge.packetPipeline.sendTo(new PacketClimbing(), player); // TODO
+			if (Config.climbeyEnabled) VivecraftForge.packetPipeline.sendTo(new PacketClimbing(Config.blockListMode, Config.blockList), player);
 			PlayerTracker.players.put(player.getGameProfile().getId(), new VRPlayerData());
 		}
 	}
