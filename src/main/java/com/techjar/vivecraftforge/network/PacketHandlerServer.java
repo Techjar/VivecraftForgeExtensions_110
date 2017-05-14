@@ -3,14 +3,8 @@ package com.techjar.vivecraftforge.network;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.INetHandler;
-
-import com.techjar.vivecraftforge.VivecraftForge;
-import com.techjar.vivecraftforge.util.VivecraftForgeLog;
 import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 

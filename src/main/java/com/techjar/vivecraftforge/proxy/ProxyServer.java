@@ -7,6 +7,7 @@ import com.techjar.vivecraftforge.VivecraftForge;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -14,6 +15,7 @@ public class ProxyServer extends ProxyCommon {
 	@Override
 	public void registerEventHandlers() {
 		super.registerEventHandlers();
+		MinecraftForge.EVENT_BUS.register(new EventHandlerServer());
 		FMLCommonHandler.instance().bus().register(new EventHandlerServer());
 	}
 	

@@ -2,6 +2,8 @@ package com.techjar.vivecraftforge;
 
 import com.techjar.vivecraftforge.network.ChannelHandler;
 import com.techjar.vivecraftforge.proxy.ProxyCommon;
+import com.techjar.vivecraftforge.util.Util;
+import com.techjar.vivecraftforge.util.VivecraftForgeLog;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -36,6 +38,6 @@ public class VivecraftForge {
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
-		// Stub Method
+		if (Config.printMoney) VivecraftForgeLog.warning(Util.getMoney());
 	}
 }

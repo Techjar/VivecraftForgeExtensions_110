@@ -4,14 +4,37 @@ import com.techjar.vivecraftforge.network.packet.PacketController0Data;
 import com.techjar.vivecraftforge.network.packet.PacketController1Data;
 import com.techjar.vivecraftforge.network.packet.PacketHeadData;
 import com.techjar.vivecraftforge.network.packet.PacketUberPacket;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class PlayerTracker {
 	public static Map<UUID, VRPlayerData> players = new HashMap<UUID, VRPlayerData>();
+	public static Set<UUID> companionPlayers = new HashSet<UUID>();
+
+	public static void tick() {
+		for (Iterator<Map.Entry<UUID, VRPlayerData>> it = players.entrySet().iterator(); it.hasNext();) {
+			Map.Entry<UUID, VRPlayerData> entry = it.next();
+			Entity entity = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(entry.getKey());
+			if (entity == null) {
+				it.remove();
+			}
+		}
+		for (Iterator<UUID> it = companionPlayers.iterator(); it.hasNext();) {
+			UUID uuid = it.next();
+			Entity entity = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(uuid);
+			if (entity == null) {
+				it.remove();
+			}
+		}
+	}
 
 	public static VRPlayerData getPlayerData(EntityPlayer entity) {
 		return players.get(entity.getGameProfile().getId());
