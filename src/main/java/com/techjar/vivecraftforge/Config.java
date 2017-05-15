@@ -49,8 +49,8 @@ public class Config {
 		// Messages
 		vrOnlyKickMessage = config.get("messages", "vronlykickmessage", "This server only allows VR players.", "Kick message displayed to non-VR players, if vronly is enabled.").getString();
 		enableJoinMessages = config.get("messages", "joinmessages", false, "Enables or disables all join messages.").getBoolean();
-		joinMessageVR = config.get("messages", "joinmessagevr", "%player% has joined using VR!", "Message displayed when a player joins using VR. Leave blank to disable.").getString();
-		joinMessageCompanion = config.get("messages", "joinmessagecompanion", "%player% has joined using non-VR companion!", "Message displayed when a player joins using the non-VR companion. Leave blank to disable.").getString();
+		joinMessageVR = config.get("messages", "joinmessagevr", "\u00A79%player% has joined using \u00A76VR\u00A79!", "Message displayed when a player joins using VR. Leave blank to disable.").getString();
+		joinMessageCompanion = config.get("messages", "joinmessagecompanion", "\u00A7a%player% has joined using non-VR companion!", "Message displayed when a player joins using the non-VR companion. Leave blank to disable.").getString();
 		// VR Changes
 		creeperSwellDistance = config.get("vrchanges", "creeperswelldistance", 1.75, "Distance at which creepers swell and explode for VR players. Default: 1.75, Vanilla: 3").getDouble();
 		// PvP

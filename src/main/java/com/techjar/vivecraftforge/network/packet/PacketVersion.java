@@ -50,18 +50,18 @@ public class PacketVersion implements IPacket {
 	public void handleServer(EntityPlayerMP player) {
 		VivecraftForge.packetPipeline.sendTo(new PacketVersion(VivecraftForge.MOD_NAME + " " + VivecraftForge.MOD_VERSION), player);
 		if (!message.contains("NONVR")) {
-			VivecraftForgeLog.debug("VR player joined: %s", message);
+			VivecraftForgeLog.info("VR player joined: %s", message);
 			VivecraftForge.packetPipeline.sendTo(new PacketRequestData(), player);
 			VivecraftForge.packetPipeline.sendTo(new PacketTeleport(), player);
 			if (Config.climbeyEnabled) VivecraftForge.packetPipeline.sendTo(new PacketClimbing(Config.blockListMode, Config.blockList), player);
 			PlayerTracker.players.put(player.getGameProfile().getId(), new VRPlayerData());
 			if (Config.enableJoinMessages && !Config.joinMessageVR.isEmpty())
-				player.getServer().sendMessage(new MessageFormatter().player(player).format(Config.joinMessageVR));
+				player.getServer().getPlayerList().sendChatMsg(new MessageFormatter().player(player).format(Config.joinMessageVR));
 		} else {
-			VivecraftForgeLog.debug("Non-VR player joined: %s", message);
+			VivecraftForgeLog.info("Non-VR player joined: %s", message);
 			PlayerTracker.companionPlayers.add(player.getGameProfile().getId());
 			if (Config.enableJoinMessages && !Config.joinMessageCompanion.isEmpty())
-				player.getServer().sendMessage(new MessageFormatter().player(player).format(Config.joinMessageCompanion));
+				player.getServer().getPlayerList().sendChatMsg(new MessageFormatter().player(player).format(Config.joinMessageCompanion));
 		}
 	}
 }

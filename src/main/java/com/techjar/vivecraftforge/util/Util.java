@@ -3,10 +3,11 @@ package com.techjar.vivecraftforge.util;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class Util {
 	public static ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -62,5 +63,66 @@ public class Util {
 			"||(100)===================  ONE HUNDRED DOLLARS =================(100)||\n" +
 			"||\\\\$//\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\\\$//||\n" +
 			"||====================================================================||";
+	}
+
+	public static TextFormatting findTextFormatByCode(char ch) {
+		ch = Character.toLowerCase(ch);
+		switch (ch) {
+			case '0': return TextFormatting.BLACK;
+			case '1': return TextFormatting.DARK_BLUE;
+			case '2': return TextFormatting.DARK_GREEN;
+			case '3': return TextFormatting.DARK_AQUA;
+			case '4': return TextFormatting.DARK_RED;
+			case '5': return TextFormatting.DARK_PURPLE;
+			case '6': return TextFormatting.GOLD;
+			case '7': return TextFormatting.GRAY;
+			case '8': return TextFormatting.DARK_GRAY;
+			case '9': return TextFormatting.BLUE;
+			case 'a': return TextFormatting.GREEN;
+			case 'b': return TextFormatting.AQUA;
+			case 'c': return TextFormatting.RED;
+			case 'd': return TextFormatting.LIGHT_PURPLE;
+			case 'e': return TextFormatting.YELLOW;
+			case 'f': return TextFormatting.WHITE;
+			case 'k': return TextFormatting.OBFUSCATED;
+			case 'l': return TextFormatting.BOLD;
+			case 'm': return TextFormatting.STRIKETHROUGH;
+			case 'n': return TextFormatting.UNDERLINE;
+			case 'o': return TextFormatting.ITALIC;
+			case 'r': return TextFormatting.RESET;
+		}
+		return null;
+	}
+
+	public static void applyTextFormatting(Style style, TextFormatting... formats) {
+		for (TextFormatting formatting : formats) {
+			switch (formatting) {
+				case OBFUSCATED:
+					style.setObfuscated(true);
+					break;
+				case BOLD:
+					style.setBold(true);
+					break;
+				case STRIKETHROUGH:
+					style.setStrikethrough(true);
+					break;
+				case UNDERLINE:
+					style.setUnderlined(true);
+					break;
+				case ITALIC:
+					style.setItalic(true);
+					break;
+				case RESET:
+					style.setObfuscated(false);
+					style.setBold(false);
+					style.setStrikethrough(false);
+					style.setUnderlined(false);
+					style.setItalic(false);
+					style.setColor(null);
+					break;
+				default:
+					style.setColor(formatting);
+			}
+		}
 	}
 }
