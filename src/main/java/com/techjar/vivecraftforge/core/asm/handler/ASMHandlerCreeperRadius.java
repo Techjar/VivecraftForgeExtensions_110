@@ -1,5 +1,6 @@
 package com.techjar.vivecraftforge.core.asm.handler;
 
+import com.techjar.vivecraftforge.core.asm.ObfNames;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import org.objectweb.asm.Opcodes;
@@ -20,7 +21,7 @@ import com.techjar.vivecraftforge.util.VivecraftForgeLog;
 public class ASMHandlerCreeperRadius extends ASMClassHandler {
 	@Override
 	public ClassTuple getDesiredClass() {
-		return new ClassTuple("net.minecraft.entity.ai.EntityAICreeperSwell", "vi");
+		return new ClassTuple("net.minecraft.entity.ai.EntityAICreeperSwell", ObfNames.ENTITYAICREEPERSWELL);
 	}
 
 	@Override
@@ -35,7 +36,7 @@ public class ASMHandlerCreeperRadius extends ASMClassHandler {
 	
 	@Override
 	public boolean shouldPatchClass() {
-		return FMLLaunchHandler.side() != Side.CLIENT;
+		return FMLLaunchHandler.side() == Side.SERVER;
 	}
 
 	public static class MethodHandler implements ASMMethodHandler {
@@ -49,7 +50,7 @@ public class ASMHandlerCreeperRadius extends ASMClassHandler {
 			LdcInsnNode insn = (LdcInsnNode)ASMUtil.findLastOpcode(methodNode, Opcodes.LDC);
 			InsnList insnList = new InsnList();
 			insnList.add(new VarInsnNode(Opcodes.ALOAD, 1));
-			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/techjar/vivecraftforge/util/ASMDelegator", "creeperSwellDistance", obfuscated ? "(DLsv;)D" : "(DLnet/minecraft/entity/EntityLivingBase;)D", false));
+			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/techjar/vivecraftforge/util/ASMDelegator", "creeperSwellDistance", obfuscated ? "(DL" + ObfNames.ENTITYLIVINGBASE + ";)D" : "(DLnet/minecraft/entity/EntityLivingBase;)D", false));
 			methodNode.instructions.insert(insn, insnList);
 			VivecraftForgeLog.debug("Inserted delegate method call.");
 		}

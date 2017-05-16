@@ -1,5 +1,8 @@
 package com.techjar.vivecraftforge.core.asm.handler;
 
+import com.techjar.vivecraftforge.core.asm.ObfNames;
+import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
+import net.minecraftforge.fml.relauncher.Side;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -18,7 +21,7 @@ import com.techjar.vivecraftforge.util.VivecraftForgeLog;
 public class ASMHandlerEndermanLook extends ASMClassHandler {
 	@Override
 	public ClassTuple getDesiredClass() {
-		return new ClassTuple("net.minecraft.entity.monster.EntityEnderman", "ya");
+		return new ClassTuple("net.minecraft.entity.monster.EntityEnderman", ObfNames.ENTITYENDERMAN);
 	}
 
 	@Override
@@ -28,21 +31,26 @@ public class ASMHandlerEndermanLook extends ASMClassHandler {
 
 	@Override
 	public boolean getComputeFrames() {
-		return true;
+		return false;
+	}
+
+	@Override
+	public boolean shouldPatchClass() {
+		return FMLLaunchHandler.side() == Side.SERVER;
 	}
 
 	public static class MethodHandler implements ASMMethodHandler {
 		@Override
 		public MethodTuple getDesiredMethod() {
-			return new MethodTuple("shouldAttackPlayer", "(Lnet/minecraft/entity/player/EntityPlayer;)Z", "f", "(Lyz;)Z");
+			return new MethodTuple("shouldAttackPlayer", "(Lnet/minecraft/entity/player/EntityPlayer;)Z", "c", "(L" + ObfNames.ENTITYPLAYER + ";)Z");
 		}
 
 		@Override
 		public void patchMethod(MethodNode methodNode, ClassNode classNode, boolean obfuscated) {
-			AbstractInsnNode insert = ASMUtil.findFirstInstruction(methodNode, Opcodes.INVOKEVIRTUAL, obfuscated ? "azw" : "net/minecraft/util/Vec3", obfuscated ? "a" : "normalize", obfuscated ? "()Lazw;" : "()Lnet/minecraft/util/Vec3;", false);
+			AbstractInsnNode insert = ASMUtil.findFirstInstruction(methodNode, Opcodes.INVOKEVIRTUAL, obfuscated ? ObfNames.VEC3D : "net/minecraft/util/math/Vec3d", obfuscated ? "a" : "normalize", obfuscated ? "()L" + ObfNames.VEC3D + ";" : "()Lnet/minecraft/util/math/Vec3d;", false);
 			InsnList insnList = new InsnList();
 			insnList.add(new VarInsnNode(Opcodes.ALOAD, 1));
-			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/techjar/vivecraftforge/util/ASMDelegator", "endermanLook", obfuscated ? "(Lazw;Lyz;)Lazw;" : "(Lnet/minecraft/util/Vec3;Lnet/minecraft/entity/player/EntityPlayer;)Lnet/minecraft/util/Vec3;", false));
+			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/techjar/vivecraftforge/util/ASMDelegator", "endermanLook", obfuscated ? "(L" + ObfNames.VEC3D + ";L" + ObfNames.ENTITYPLAYER + ";)L" + ObfNames.VEC3D + ";" : "(Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/entity/player/EntityPlayer;)Lnet/minecraft/util/math/Vec3d;", false));
 			methodNode.instructions.insert(insert, insnList);
 			VivecraftForgeLog.debug("Inserted delegate method call.");
 		}

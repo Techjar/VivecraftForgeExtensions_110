@@ -3,20 +3,18 @@ package com.techjar.vivecraftforge.core.asm;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.objectweb.asm.Type;
-
 import com.techjar.vivecraftforge.core.asm.handler.*;
 import com.techjar.vivecraftforge.util.VivecraftForgeLog;
 
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.launchwrapper.IClassTransformer;
 
 public class ClassTransformer implements IClassTransformer {
 	private static final List<ASMClassHandler> asmHandlers = new ArrayList<ASMClassHandler>();
 	static {
-		//asmHandlers.add(new ASMHandlerIncreaseReachDistance());
-		//asmHandlers.add(new ASMHandlerCreeperRadius());
-		//asmHandlers.add(new ASMHandlerEndermanLook());
+		asmHandlers.add(new ASMHandlerIncreaseReachDistance());
+		asmHandlers.add(new ASMHandlerCreeperRadius());
+		asmHandlers.add(new ASMHandlerEndermanLook());
+		asmHandlers.add(new ASMHandlerRubberBanding());
 	}
 
 	@Override
@@ -25,10 +23,10 @@ public class ClassTransformer implements IClassTransformer {
 			if (!handler.shouldPatchClass()) continue;
 			ClassTuple tuple = handler.getDesiredClass();
 			if (name.equals(tuple.classNameObf)) {
-				VivecraftForgeLog.debug("Patching class: " + name + " (" + tuple.className + ")");
+				VivecraftForgeLog.debug("Patching class: " + name + " (" + tuple.className + ") using " + handler.getClass().getSimpleName());
 				bytes = handler.patchClass(bytes, true);
 			} else if (name.equals(tuple.className)) {
-				VivecraftForgeLog.debug("Patching class: " + name);
+				VivecraftForgeLog.debug("Patching class: " + name + " using " + handler.getClass().getSimpleName());
 				bytes = handler.patchClass(bytes, false);
 			}
 		}

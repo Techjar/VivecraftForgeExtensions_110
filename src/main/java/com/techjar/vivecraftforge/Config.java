@@ -23,6 +23,8 @@ public class Config {
 	public static String joinMessageVR;
 	public static String joinMessageCompanion;
 	public static double creeperSwellDistance;
+	public static float movedTooQuicklyThreshold;
+	public static double movedWronglyThreshold;
 	public static boolean vrVsVR;
 	public static boolean vrVsSeatedVR;
 	public static boolean vrVsNonVR;
@@ -53,6 +55,8 @@ public class Config {
 		joinMessageCompanion = config.get("messages", "joinmessagecompanion", "\u00A7a%player% has joined using non-VR companion!", "Message displayed when a player joins using the non-VR companion. Leave blank to disable.").getString();
 		// VR Changes
 		creeperSwellDistance = config.get("vrchanges", "creeperswelldistance", 1.75, "Distance at which creepers swell and explode for VR players. Default: 1.75, Vanilla: 3").getDouble();
+		movedTooQuicklyThreshold = (float)config.get("vrchanges", "movedtooquicklythreshold", 64.0, "Increase this if you experience rubber banding when teleporting.").getDouble();
+		movedWronglyThreshold = config.get("vrchanges", "movedwronglythreshold", 15.0, "Increase this if you experience rubber banding when teleporting.").getDouble();
 		// PvP
 		vrVsVR = config.get("pvp", "vrvsvr", true, "Allows standing VR players to attack standing VR players.").getBoolean();
 		vrVsSeatedVR = config.get("pvp", "vrvsseatedvr", true, "Allows standing VR players to attack seated VR players.").getBoolean();
