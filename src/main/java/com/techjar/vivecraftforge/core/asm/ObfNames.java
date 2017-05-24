@@ -1,15 +1,15 @@
 package com.techjar.vivecraftforge.core.asm;
 
 public class ObfNames {
-	public static final String ENTITYAICREEPERSWELL = "ut";
-	public static final String ENTITYLIVINGBASE = "sf";
-	public static final String ENTITYENDERMAN = "yq";
-	public static final String ENTITYPLAYER = "zs";
-	public static final String VEC3D = "bcb";
-	public static final String NETHANDLERPLAYSERVER = "me";
-	public static final String CPACKETPLAYER = "iw";
-	public static final String CPACKETPLAYERTRYUSEITEMONBLOCK = "jj";
-	public static final String CPACKETPLAYERDIGGING = "ja";
-	public static final String CPACKETUSEENTITY = "iu";
-	public static final String ENTITYPLAYERMP = "lu";
+	public static final String ENTITYAICREEPERSWELL = "vm";
+	public static final String ENTITYLIVINGBASE = "sw";
+	public static final String ENTITYENDERMAN = "zr";
+	public static final String ENTITYPLAYER = "aay";
+	public static final String VEC3D = "bdw";
+	public static final String NETHANDLERPLAYSERVER = "mi";
+	public static final String CPACKETPLAYER = "iz";
+	public static final String CPACKETPLAYERTRYUSEITEMONBLOCK = "jm";
+	public static final String CPACKETPLAYERDIGGING = "jd";
+	public static final String CPACKETUSEENTITY = "ix";
+	public static final String ENTITYPLAYERMP = "ly";
 }

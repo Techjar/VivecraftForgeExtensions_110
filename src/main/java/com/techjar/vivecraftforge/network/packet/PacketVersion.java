@@ -56,12 +56,12 @@ public class PacketVersion implements IPacket {
 			if (Config.climbeyEnabled) VivecraftForge.packetPipeline.sendTo(new PacketClimbing(Config.blockListMode, Config.blockList), player);
 			PlayerTracker.players.put(player.getGameProfile().getId(), new VRPlayerData());
 			if (Config.enableJoinMessages && !Config.joinMessageVR.isEmpty())
-				player.getServer().getPlayerList().sendChatMsg(new MessageFormatter().player(player).format(Config.joinMessageVR));
+				player.getServer().getPlayerList().sendMessage(new MessageFormatter().player(player).format(Config.joinMessageVR));
 		} else {
 			VivecraftForgeLog.info("Non-VR player joined: %s", message);
 			PlayerTracker.companionPlayers.add(player.getGameProfile().getId());
 			if (Config.enableJoinMessages && !Config.joinMessageCompanion.isEmpty())
-				player.getServer().getPlayerList().sendChatMsg(new MessageFormatter().player(player).format(Config.joinMessageCompanion));
+				player.getServer().getPlayerList().sendMessage(new MessageFormatter().player(player).format(Config.joinMessageCompanion));
 		}
 	}
 }
