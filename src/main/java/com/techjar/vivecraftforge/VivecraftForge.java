@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = "vivecraftforgeextensions", name = "Vivecraft Forge Extensions", version = "@VERSION@", acceptableRemoteVersions = "*")
+@Mod(modid = "vivecraftforgeextensions", name = "Vivecraft Forge Extensions", version = "@VERSION@", acceptableRemoteVersions = "*", acceptedMinecraftVersions = "1.11.2")
 public class VivecraftForge {
 	public static final String MOD_ID = "vivecraftforgeextensions";
 	public static final String MOD_NAME = "Vivecraft Forge Extensions";
