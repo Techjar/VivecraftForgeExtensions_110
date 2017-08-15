@@ -101,9 +101,9 @@ public class EventHandlerServer {
 	public void onLivingHurt(LivingHurtEvent event) {
 		EntityLivingBase target = event.getEntityLiving();
 		DamageSource source = event.getSource();
-		if (source.getSourceOfDamage() instanceof EntityArrow && source.getEntity() instanceof EntityPlayer) {
-			EntityArrow arrow = (EntityArrow)source.getSourceOfDamage();
-			EntityPlayer attacker = (EntityPlayer)source.getEntity();
+		if (source.getImmediateSource() instanceof EntityArrow && source.getTrueSource() instanceof EntityPlayer) {
+			EntityArrow arrow = (EntityArrow)source.getImmediateSource();
+			EntityPlayer attacker = (EntityPlayer)source.getTrueSource();
 			if (PlayerTracker.hasPlayerData(attacker)) {
 				VRPlayerData data = PlayerTracker.getPlayerData(attacker);
 				boolean headshot = Util.isHeadshot(target, arrow);
@@ -132,7 +132,7 @@ public class EventHandlerServer {
 							@Override
 							public void run() {
 								if (player.connection.getNetworkManager().isChannelOpen()) {
-									player.connection.disconnect(Config.vrOnlyKickMessage);
+									player.connection.disconnect(new TextComponentString(Config.vrOnlyKickMessage));
 								}
 							}
 						});

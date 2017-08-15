@@ -6,11 +6,12 @@ import com.techjar.vivecraftforge.util.Util;
 import com.techjar.vivecraftforge.util.VivecraftForgeLog;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = "vivecraftforgeextensions", name = "Vivecraft Forge Extensions", version = "@VERSION@", acceptableRemoteVersions = "*")
+@Mod(modid = "vivecraftforgeextensions", name = "Vivecraft Forge Extensions", version = "@VERSION@", acceptableRemoteVersions = "*", certificateFingerprint = "fd9d04044a812606cd8b960f9512e4e30cd25710")
 public class VivecraftForge {
 	public static final String MOD_ID = "vivecraftforgeextensions";
 	public static final String MOD_NAME = "Vivecraft Forge Extensions";
@@ -39,5 +40,10 @@ public class VivecraftForge {
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		if (Config.printMoney) VivecraftForgeLog.warning(Util.getMoney());
+	}
+
+	@Mod.EventHandler
+	public void onFingerprintViolation(FMLFingerprintViolationEvent event) {
+		VivecraftForgeLog.warning("Invalid fingerprint detected!");
 	}
 }

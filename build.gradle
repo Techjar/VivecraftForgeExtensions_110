@@ -11,7 +11,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
 
@@ -22,9 +22,9 @@ group= "com.techjar.vivecraftforge" // http://maven.apache.org/guides/mini/guide
 archivesBaseName = "VivecraftForgeExtensions"
 
 minecraft {
-    version = "1.11.2-13.20.0.2228"
+    version = "1.12.1-14.22.0.2453"
     runDir = "run"
-    mappings = "snapshot_20170524"
+    mappings = "snapshot_20170814"
 
     replace "@RAW_VERSION@", project.version
 
@@ -78,4 +78,17 @@ processResources
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
+}
+
+task signJar(type: SignJar, dependsOn: reobfJar) {
+    onlyIf { // Skip the task if our secret data isn't available
+        project.hasProperty('keyStore')
+    }
+
+    keyStore = project.keyStore // This needs to be a path to the keystore file
+    alias = project.keyStoreAlias
+    storePass = project.keyStorePass
+    keyPass = project.keyStoreKeyPass
+    inputFile = jar.archivePath
+    outputFile = jar.archivePath
 }

@@ -52,7 +52,7 @@ public class ASMHandlerIncreaseReachDistance extends ASMClassHandler {
 			if (insert == null) return;
 			InsnList insnList = new InsnList();
 			insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
-			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, obfuscated ? ObfNames.NETHANDLERPLAYSERVER : "net/minecraft/network/NetHandlerPlayServer", obfuscated ? "b" : "playerEntity", obfuscated ? "L" + ObfNames.ENTITYPLAYERMP + ";" : "Lnet/minecraft/entity/player/EntityPlayerMP;"));
+			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, obfuscated ? ObfNames.NETHANDLERPLAYSERVER : "net/minecraft/network/NetHandlerPlayServer", obfuscated ? "b" : "player", obfuscated ? "L" + ObfNames.ENTITYPLAYERMP + ";" : "Lnet/minecraft/entity/player/EntityPlayerMP;"));
 			insnList.add(new VarInsnNode(Opcodes.DLOAD, 7));
 			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/techjar/vivecraftforge/util/ASMDelegator", "playerBlockReachDistance", obfuscated ? "(L" + ObfNames.ENTITYPLAYER + ";D)D" : "(Lnet/minecraft/entity/player/EntityPlayer;D)D", false));
 			insnList.add(new VarInsnNode(Opcodes.DSTORE, 7));
@@ -73,7 +73,7 @@ public class ASMHandlerIncreaseReachDistance extends ASMClassHandler {
 			if (insert == null) return;
 			InsnList insnList = new InsnList();
 			insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
-			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, obfuscated ? ObfNames.NETHANDLERPLAYSERVER : "net/minecraft/network/NetHandlerPlayServer", obfuscated ? "b" : "playerEntity", obfuscated ? "L" + ObfNames.ENTITYPLAYERMP + ";" : "Lnet/minecraft/entity/player/EntityPlayerMP;"));
+			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, obfuscated ? ObfNames.NETHANDLERPLAYSERVER : "net/minecraft/network/NetHandlerPlayServer", obfuscated ? "b" : "player", obfuscated ? "L" + ObfNames.ENTITYPLAYERMP + ";" : "Lnet/minecraft/entity/player/EntityPlayerMP;"));
 			insnList.add(new VarInsnNode(Opcodes.DLOAD, 13));
 			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/techjar/vivecraftforge/util/ASMDelegator", "playerBlockReachDistance", obfuscated ? "(L" + ObfNames.ENTITYPLAYER + ";D)D" : "(Lnet/minecraft/entity/player/EntityPlayer;D)D", false));
 			insnList.add(new VarInsnNode(Opcodes.DSTORE, 13));
@@ -94,12 +94,12 @@ public class ASMHandlerIncreaseReachDistance extends ASMClassHandler {
 			if (insert == null) return;
 			InsnList insnList = new InsnList();
 			insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
-			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, obfuscated ? ObfNames.NETHANDLERPLAYSERVER : "net/minecraft/network/NetHandlerPlayServer", obfuscated ? "b" : "playerEntity", obfuscated ? "L" + ObfNames.ENTITYPLAYERMP + ";" : "Lnet/minecraft/entity/player/EntityPlayerMP;"));
+			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, obfuscated ? ObfNames.NETHANDLERPLAYSERVER : "net/minecraft/network/NetHandlerPlayServer", obfuscated ? "b" : "player", obfuscated ? "L" + ObfNames.ENTITYPLAYERMP + ";" : "Lnet/minecraft/entity/player/EntityPlayerMP;"));
 			insnList.add(new VarInsnNode(Opcodes.DLOAD, 5));
 			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/techjar/vivecraftforge/util/ASMDelegator", "playerEntityReachDistance", obfuscated ? "(L" + ObfNames.ENTITYPLAYER + ";D)D" : "(Lnet/minecraft/entity/player/EntityPlayer;D)D", false));
 			insnList.add(new VarInsnNode(Opcodes.DSTORE, 5));
 			insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
-			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, obfuscated ? ObfNames.NETHANDLERPLAYSERVER : "net/minecraft/network/NetHandlerPlayServer", obfuscated ? "b" : "playerEntity", obfuscated ? "L" + ObfNames.ENTITYPLAYERMP + ";" : "Lnet/minecraft/entity/player/EntityPlayerMP;"));
+			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, obfuscated ? ObfNames.NETHANDLERPLAYSERVER : "net/minecraft/network/NetHandlerPlayServer", obfuscated ? "b" : "player", obfuscated ? "L" + ObfNames.ENTITYPLAYERMP + ";" : "Lnet/minecraft/entity/player/EntityPlayerMP;"));
 			insnList.add(new VarInsnNode(Opcodes.ILOAD, 4));
 			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/techjar/vivecraftforge/util/ASMDelegator", "playerEntitySeenOverride", obfuscated ? "(L" + ObfNames.ENTITYPLAYER + ";Z)Z" : "(Lnet/minecraft/entity/player/EntityPlayer;Z)Z", false));
 			insnList.add(new VarInsnNode(Opcodes.ISTORE, 4));

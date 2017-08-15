@@ -51,7 +51,7 @@ public class ASMHandlerRubberBanding extends ASMClassHandler {
 			LdcInsnNode ldc1 = (LdcInsnNode)ASMUtil.findFirstInstruction(methodNode, Opcodes.LDC, 300F);
 			InsnList insnList = new InsnList();
 			insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
-			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, obfuscated ? ObfNames.NETHANDLERPLAYSERVER : "net/minecraft/network/NetHandlerPlayServer", obfuscated ? "b" : "playerEntity", obfuscated ? "L" + ObfNames.ENTITYPLAYERMP + ";" : "Lnet/minecraft/entity/player/EntityPlayerMP;"));
+			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, obfuscated ? ObfNames.NETHANDLERPLAYSERVER : "net/minecraft/network/NetHandlerPlayServer", obfuscated ? "b" : "player", obfuscated ? "L" + ObfNames.ENTITYPLAYERMP + ";" : "Lnet/minecraft/entity/player/EntityPlayerMP;"));
 			insnList.add(new InsnNode(Opcodes.ICONST_1));
 			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/techjar/vivecraftforge/util/ASMDelegator", "movedTooQuicklyThreshold", obfuscated ? "(L" + ObfNames.ENTITYPLAYER + ";Z)F" : "(Lnet/minecraft/entity/player/EntityPlayer;Z)F", false));
 			methodNode.instructions.insert(ldc1, insnList);
@@ -61,7 +61,7 @@ public class ASMHandlerRubberBanding extends ASMClassHandler {
 			LdcInsnNode ldc2 = (LdcInsnNode)ASMUtil.findFirstInstruction(methodNode, Opcodes.LDC, 100F);
 			insnList.clear();
 			insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
-			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, obfuscated ? ObfNames.NETHANDLERPLAYSERVER : "net/minecraft/network/NetHandlerPlayServer", obfuscated ? "b" : "playerEntity", obfuscated ? "L" + ObfNames.ENTITYPLAYERMP + ";" : "Lnet/minecraft/entity/player/EntityPlayerMP;"));
+			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, obfuscated ? ObfNames.NETHANDLERPLAYSERVER : "net/minecraft/network/NetHandlerPlayServer", obfuscated ? "b" : "player", obfuscated ? "L" + ObfNames.ENTITYPLAYERMP + ";" : "Lnet/minecraft/entity/player/EntityPlayerMP;"));
 			insnList.add(new InsnNode(Opcodes.ICONST_0));
 			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/techjar/vivecraftforge/util/ASMDelegator", "movedTooQuicklyThreshold", obfuscated ? "(L" + ObfNames.ENTITYPLAYER + ";Z)F" : "(Lnet/minecraft/entity/player/EntityPlayer;Z)F", false));
 			methodNode.instructions.insert(ldc2, insnList);
@@ -71,7 +71,7 @@ public class ASMHandlerRubberBanding extends ASMClassHandler {
 			LdcInsnNode ldc3 = (LdcInsnNode)ASMUtil.findNthInstruction(methodNode, Opcodes.LDC, 1, 0.0625D);
 			insnList.clear();
 			insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
-			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, obfuscated ? ObfNames.NETHANDLERPLAYSERVER : "net/minecraft/network/NetHandlerPlayServer", obfuscated ? "b" : "playerEntity", obfuscated ? "L" + ObfNames.ENTITYPLAYERMP + ";" : "Lnet/minecraft/entity/player/EntityPlayerMP;"));
+			insnList.add(new FieldInsnNode(Opcodes.GETFIELD, obfuscated ? ObfNames.NETHANDLERPLAYSERVER : "net/minecraft/network/NetHandlerPlayServer", obfuscated ? "b" : "player", obfuscated ? "L" + ObfNames.ENTITYPLAYERMP + ";" : "Lnet/minecraft/entity/player/EntityPlayerMP;"));
 			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/techjar/vivecraftforge/util/ASMDelegator", "movedWronglyThreshold", obfuscated ? "(L" + ObfNames.ENTITYPLAYER + ";)D" : "(Lnet/minecraft/entity/player/EntityPlayer;)D", false));
 			methodNode.instructions.insert(ldc3, insnList);
 			methodNode.instructions.remove(ldc3);

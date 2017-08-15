@@ -120,9 +120,9 @@ public class Quaternion {
 		float num10 = this.w * num;
 		float num11 = this.w * num2;
 		float num12 = this.w * num3;
-		double x = (1f - (num5 + num6)) * vec.xCoord + (num7 - num12) * vec.yCoord + (num8 + num11) * vec.zCoord;
-		double y = (num7 + num12) * vec.xCoord + (1f - (num4 + num6)) * vec.yCoord + (num9 - num10) * vec.zCoord;
-		double z = (num8 - num11) * vec.xCoord + (num9 + num10) * vec.yCoord + (1f - (num4 + num5)) * vec.zCoord;
+		double x = (1f - (num5 + num6)) * vec.x + (num7 - num12) * vec.y + (num8 + num11) * vec.z;
+		double y = (num7 + num12) * vec.x + (1f - (num4 + num6)) * vec.y + (num9 - num10) * vec.z;
+		double z = (num8 - num11) * vec.x + (num9 + num10) * vec.y + (1f - (num4 + num5)) * vec.z;
 		return new Vec3d(x, y, z);
 	}
 

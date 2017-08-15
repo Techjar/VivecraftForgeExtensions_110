@@ -42,7 +42,7 @@ public class ASMHandlerEndermanLook extends ASMClassHandler {
 	public static class MethodHandler implements ASMMethodHandler {
 		@Override
 		public MethodTuple getDesiredMethod() {
-			return new MethodTuple("shouldAttackPlayer", "(Lnet/minecraft/entity/player/EntityPlayer;)Z", "c", "(L" + ObfNames.ENTITYPLAYER + ";)Z");
+			return new MethodTuple("shouldAttackPlayer", "(Lnet/minecraft/entity/player/EntityPlayer;)Z", "f", "(L" + ObfNames.ENTITYPLAYER + ";)Z");
 		}
 
 		@Override

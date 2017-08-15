@@ -7,7 +7,7 @@ import com.techjar.vivecraftforge.core.asm.ClassTransformer;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
 @IFMLLoadingPlugin.Name("Vivecraft Forge Extensions Core")
-@IFMLLoadingPlugin.MCVersion("1.11.2")
+@IFMLLoadingPlugin.MCVersion("1.12.1")
 @IFMLLoadingPlugin.TransformerExclusions("com.techjar.vivecraftforge.core")
 //@SortingIndex(1001)
 public class FMLPlugin implements IFMLLoadingPlugin {
