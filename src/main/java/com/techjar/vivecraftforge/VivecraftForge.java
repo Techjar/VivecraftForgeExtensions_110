@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = "vivecraftforgeextensions", name = "Vivecraft Forge Extensions", version = "@VERSION@", acceptableRemoteVersions = "*", certificateFingerprint = "fd9d04044a812606cd8b960f9512e4e30cd25710")
+@Mod(modid = "vivecraftforgeextensions", name = "Vivecraft Forge Extensions", version = "@VERSION@", acceptableRemoteVersions = "*", acceptedMinecraftVersions = "1.12.1", certificateFingerprint = "fd9d04044a812606cd8b960f9512e4e30cd25710")
 public class VivecraftForge {
 	public static final String MOD_ID = "vivecraftforgeextensions";
 	public static final String MOD_NAME = "Vivecraft Forge Extensions";
