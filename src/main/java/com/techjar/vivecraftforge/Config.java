@@ -8,6 +8,8 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
+import net.minecraftforge.fml.relauncher.Side;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -42,6 +44,7 @@ public class Config {
 	}
 
 	public static void init(File file) {
+		if (FMLLaunchHandler.side() != Side.SERVER) return;
 		config = new Configuration(file);
 		config.load();
 		// General
