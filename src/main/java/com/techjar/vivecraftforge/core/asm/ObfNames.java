@@ -5,7 +5,7 @@ public class ObfNames {
 	public static final String ENTITYLIVINGBASE = "vp";
 	public static final String ENTITYENDERMAN = "acu";
 	public static final String ENTITYPLAYER = "aed";
-	public static final String VEC3D = "bne";
+	public static final String VEC3D = "bhe";
 	public static final String NETHANDLERPLAYSERVER = "pa";
 	public static final String CPACKETPLAYER = "lk";
 	public static final String CPACKETPLAYERTRYUSEITEMONBLOCK = "ma";
