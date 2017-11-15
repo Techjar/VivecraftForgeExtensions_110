@@ -35,3 +35,6 @@ generated/
 *.iml
 *.ipr
 *.iws
+
+# Misc
+.directory
