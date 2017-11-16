@@ -1,6 +1,6 @@
 package com.techjar.vivecraftforge.network;
 
-import com.techjar.vivecraftforge.util.VivecraftForgeLog;
+import com.techjar.vivecraftforge.util.LogHelper;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -12,7 +12,7 @@ public class PacketHandlerClient extends SimpleChannelInboundHandler<IPacket> {
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, IPacket msg) throws Exception {
 		if (ctx.channel().attr(NetworkRegistry.CHANNEL_SOURCE).get() != Side.CLIENT) return;
-		VivecraftForgeLog.warning("Should never receive a client packet!");
+		LogHelper.warning("Should never receive a client packet!");
 		//msg.handleClient(FMLClientHandler.instance().getClientPlayerEntity());
 	}
 }

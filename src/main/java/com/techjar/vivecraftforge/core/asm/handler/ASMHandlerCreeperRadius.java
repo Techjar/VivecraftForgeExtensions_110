@@ -16,7 +16,7 @@ import com.techjar.vivecraftforge.core.asm.ASMMethodHandler;
 import com.techjar.vivecraftforge.core.asm.ASMUtil;
 import com.techjar.vivecraftforge.core.asm.ClassTuple;
 import com.techjar.vivecraftforge.core.asm.MethodTuple;
-import com.techjar.vivecraftforge.util.VivecraftForgeLog;
+import com.techjar.vivecraftforge.util.LogHelper;
 
 public class ASMHandlerCreeperRadius extends ASMClassHandler {
 	@Override
@@ -52,7 +52,7 @@ public class ASMHandlerCreeperRadius extends ASMClassHandler {
 			insnList.add(new VarInsnNode(Opcodes.ALOAD, 1));
 			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/techjar/vivecraftforge/util/ASMDelegator", "creeperSwellDistance", obfuscated ? "(DL" + ObfNames.ENTITYLIVINGBASE + ";)D" : "(DLnet/minecraft/entity/EntityLivingBase;)D", false));
 			methodNode.instructions.insert(insn, insnList);
-			VivecraftForgeLog.debug("Inserted delegate method call.");
+			LogHelper.debug("Inserted delegate method call.");
 		}
 	}
 }

@@ -3,7 +3,7 @@ package com.techjar.vivecraftforge;
 import com.techjar.vivecraftforge.network.ChannelHandler;
 import com.techjar.vivecraftforge.proxy.ProxyCommon;
 import com.techjar.vivecraftforge.util.Util;
-import com.techjar.vivecraftforge.util.VivecraftForgeLog;
+import com.techjar.vivecraftforge.util.LogHelper;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
@@ -39,11 +39,11 @@ public class VivecraftForge {
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
-		if (Config.printMoney) VivecraftForgeLog.warning(Util.getMoney());
+		if (Config.printMoney) LogHelper.warning(Util.getMoney());
 	}
 
 	@Mod.EventHandler
 	public void onFingerprintViolation(FMLFingerprintViolationEvent event) {
-		VivecraftForgeLog.warning("Invalid fingerprint detected!");
+		LogHelper.warning("Invalid fingerprint detected!");
 	}
 }

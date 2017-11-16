@@ -7,12 +7,11 @@ import com.techjar.vivecraftforge.network.IPacket;
 import com.techjar.vivecraftforge.util.MessageFormatter;
 import com.techjar.vivecraftforge.util.PlayerTracker;
 import com.techjar.vivecraftforge.util.VRPlayerData;
-import com.techjar.vivecraftforge.util.VivecraftForgeLog;
+import com.techjar.vivecraftforge.util.LogHelper;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 /*
@@ -50,7 +49,7 @@ public class PacketVersion implements IPacket {
 	public void handleServer(EntityPlayerMP player) {
 		VivecraftForge.packetPipeline.sendTo(new PacketVersion(VivecraftForge.MOD_NAME + " " + VivecraftForge.MOD_VERSION), player);
 		if (!message.contains("NONVR")) {
-			VivecraftForgeLog.info("VR player joined: %s", message);
+			LogHelper.info("VR player joined: %s", message);
 			VivecraftForge.packetPipeline.sendTo(new PacketRequestData(), player);
 			VivecraftForge.packetPipeline.sendTo(new PacketTeleport(), player);
 			if (Config.climbeyEnabled) VivecraftForge.packetPipeline.sendTo(new PacketClimbing(Config.blockListMode, Config.blockList), player);
@@ -58,7 +57,7 @@ public class PacketVersion implements IPacket {
 			if (Config.enableJoinMessages && !Config.joinMessageVR.isEmpty())
 				player.getServer().getPlayerList().sendMessage(new MessageFormatter().player(player).format(Config.joinMessageVR));
 		} else {
-			VivecraftForgeLog.info("Non-VR player joined: %s", message);
+			LogHelper.info("Non-VR player joined: %s", message);
 			PlayerTracker.companionPlayers.add(player.getGameProfile().getId());
 			if (Config.enableJoinMessages && !Config.joinMessageCompanion.isEmpty())
 				player.getServer().getPlayerList().sendMessage(new MessageFormatter().player(player).format(Config.joinMessageCompanion));

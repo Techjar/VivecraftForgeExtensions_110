@@ -3,7 +3,7 @@ package com.techjar.vivecraftforge;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import com.techjar.vivecraftforge.util.BlockListMode;
-import com.techjar.vivecraftforge.util.VivecraftForgeLog;
+import com.techjar.vivecraftforge.util.LogHelper;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.common.config.Configuration;
@@ -86,7 +86,7 @@ public class Config {
 					str = str.substring(0, colon);
 					if (Ints.tryParse(meta) == null) {
 						if (str.indexOf(':') != -1) { // Extra colons, must be meta
-							VivecraftForgeLog.warning("Invalid meta for blocklist item: %s", fullStr);
+							LogHelper.warning("Invalid meta for blocklist item: %s", fullStr);
 							it.remove();
 							changed = true;
 							continue;
@@ -97,13 +97,13 @@ public class Config {
 				}
 				if (Ints.tryParse(str) != null) {
 					if (Block.getBlockById(Integer.parseInt(str)) == Blocks.AIR) {
-						VivecraftForgeLog.warning("Unknown block for blocklist item: %s", fullStr);
+						LogHelper.warning("Unknown block for blocklist item: %s", fullStr);
 						it.remove();
 						changed = true;
 					}
 				} else {
 					if (Block.getBlockFromName(str) == Blocks.AIR || Block.getBlockFromName(str) == null) {
-						VivecraftForgeLog.warning("Unknown block for blocklist item: %s", fullStr);
+						LogHelper.warning("Unknown block for blocklist item: %s", fullStr);
 						it.remove();
 						changed = true;
 					}

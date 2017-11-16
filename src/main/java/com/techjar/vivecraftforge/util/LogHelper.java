@@ -3,7 +3,7 @@ package com.techjar.vivecraftforge.util;
 import net.minecraftforge.fml.relauncher.FMLRelaunchLog;
 import org.apache.logging.log4j.Level;
 
-public class VivecraftForgeLog {
+public class LogHelper {
 	public static void info(String message, Object... data) {
 		FMLRelaunchLog.log("Vivecraft Forge Extensions", Level.INFO, message, data);
 	}
@@ -17,6 +17,6 @@ public class VivecraftForgeLog {
 	}
 
 	public static void debug(String message, Object... data) {
-		FMLRelaunchLog.log("Vivecraft Forge Extensions", Level.DEBUG, message, data);
+		FMLRelaunchLog.log("Vivecraft Forge Extensions", Level.INFO, "[DEBUG] " + message, data);
 	}
 }

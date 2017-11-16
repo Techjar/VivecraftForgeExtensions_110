@@ -8,7 +8,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import com.techjar.vivecraftforge.util.VivecraftForgeLog;
+import com.techjar.vivecraftforge.util.LogHelper;
 
 public abstract class ASMClassHandler {
 	public abstract ClassTuple getDesiredClass();
@@ -34,7 +34,7 @@ public abstract class ASMClassHandler {
 			for (ASMMethodHandler handler : handlers) {
 				MethodTuple tuple = handler.getDesiredMethod();
 				if ((method.name.equals(tuple.methodName) && method.desc.equals(tuple.methodDesc)) || (method.name.equals(tuple.methodNameObf) && method.desc.equals(tuple.methodDescObf))) {
-					VivecraftForgeLog.debug("Patching method: " + method.name + method.desc + (obfuscated ? " (" + tuple.methodName + tuple.methodDesc + ")" : ""));
+					LogHelper.debug("Patching method: " + method.name + method.desc + (obfuscated ? " (" + tuple.methodName + tuple.methodDesc + ")" : ""));
 					handler.patchMethod(method, classNode, obfuscated);
 				}
 			}

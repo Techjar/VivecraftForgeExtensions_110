@@ -6,7 +6,7 @@ import com.techjar.vivecraftforge.core.asm.ASMUtil;
 import com.techjar.vivecraftforge.core.asm.ClassTuple;
 import com.techjar.vivecraftforge.core.asm.MethodTuple;
 import com.techjar.vivecraftforge.core.asm.ObfNames;
-import com.techjar.vivecraftforge.util.VivecraftForgeLog;
+import com.techjar.vivecraftforge.util.LogHelper;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import org.objectweb.asm.Opcodes;
@@ -56,7 +56,7 @@ public class ASMHandlerRubberBanding extends ASMClassHandler {
 			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/techjar/vivecraftforge/util/ASMDelegator", "movedTooQuicklyThreshold", obfuscated ? "(L" + ObfNames.ENTITYPLAYER + ";Z)F" : "(Lnet/minecraft/entity/player/EntityPlayer;Z)F", false));
 			methodNode.instructions.insert(ldc1, insnList);
 			methodNode.instructions.remove(ldc1);
-			VivecraftForgeLog.debug("Replaced float constant " + ldc1.cst + " with delegate method call.");
+			LogHelper.debug("Replaced float constant " + ldc1.cst + " with delegate method call.");
 
 			LdcInsnNode ldc2 = (LdcInsnNode)ASMUtil.findFirstInstruction(methodNode, Opcodes.LDC, 100F);
 			insnList.clear();
@@ -66,7 +66,7 @@ public class ASMHandlerRubberBanding extends ASMClassHandler {
 			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/techjar/vivecraftforge/util/ASMDelegator", "movedTooQuicklyThreshold", obfuscated ? "(L" + ObfNames.ENTITYPLAYER + ";Z)F" : "(Lnet/minecraft/entity/player/EntityPlayer;Z)F", false));
 			methodNode.instructions.insert(ldc2, insnList);
 			methodNode.instructions.remove(ldc2);
-			VivecraftForgeLog.debug("Replaced float constant " + ldc2.cst + " with delegate method call.");
+			LogHelper.debug("Replaced float constant " + ldc2.cst + " with delegate method call.");
 
 			LdcInsnNode ldc3 = (LdcInsnNode)ASMUtil.findNthInstruction(methodNode, Opcodes.LDC, 1, 0.0625D);
 			insnList.clear();
@@ -75,7 +75,7 @@ public class ASMHandlerRubberBanding extends ASMClassHandler {
 			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/techjar/vivecraftforge/util/ASMDelegator", "movedWronglyThreshold", obfuscated ? "(L" + ObfNames.ENTITYPLAYER + ";)D" : "(Lnet/minecraft/entity/player/EntityPlayer;)D", false));
 			methodNode.instructions.insert(ldc3, insnList);
 			methodNode.instructions.remove(ldc3);
-			VivecraftForgeLog.debug("Replaced second double constant " + ldc3.cst + " with delegate method call.");
+			LogHelper.debug("Replaced second double constant " + ldc3.cst + " with delegate method call.");
 		}
 	}
 }

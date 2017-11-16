@@ -22,7 +22,7 @@ group= "com.techjar.vivecraftforge" // http://maven.apache.org/guides/mini/guide
 archivesBaseName = "VivecraftForgeExtensions"
 
 minecraft {
-    version = "1.12.1-14.22.0.2453"
+    version = "1.12.2-14.23.0.2491"
     runDir = "run"
     mappings = "snapshot_20170814"
 

@@ -16,7 +16,7 @@ import com.techjar.vivecraftforge.core.asm.ASMMethodHandler;
 import com.techjar.vivecraftforge.core.asm.ASMUtil;
 import com.techjar.vivecraftforge.core.asm.ClassTuple;
 import com.techjar.vivecraftforge.core.asm.MethodTuple;
-import com.techjar.vivecraftforge.util.VivecraftForgeLog;
+import com.techjar.vivecraftforge.util.LogHelper;
 
 public class ASMHandlerEndermanLook extends ASMClassHandler {
 	@Override
@@ -52,7 +52,7 @@ public class ASMHandlerEndermanLook extends ASMClassHandler {
 			insnList.add(new VarInsnNode(Opcodes.ALOAD, 1));
 			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/techjar/vivecraftforge/util/ASMDelegator", "endermanLook", obfuscated ? "(L" + ObfNames.VEC3D + ";L" + ObfNames.ENTITYPLAYER + ";)L" + ObfNames.VEC3D + ";" : "(Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/entity/player/EntityPlayer;)Lnet/minecraft/util/math/Vec3d;", false));
 			methodNode.instructions.insert(insert, insnList);
-			VivecraftForgeLog.debug("Inserted delegate method call.");
+			LogHelper.debug("Inserted delegate method call.");
 		}
 	}
 }

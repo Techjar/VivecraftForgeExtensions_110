@@ -17,7 +17,7 @@ import com.techjar.vivecraftforge.core.asm.ASMMethodHandler;
 import com.techjar.vivecraftforge.core.asm.ASMUtil;
 import com.techjar.vivecraftforge.core.asm.ClassTuple;
 import com.techjar.vivecraftforge.core.asm.MethodTuple;
-import com.techjar.vivecraftforge.util.VivecraftForgeLog;
+import com.techjar.vivecraftforge.util.LogHelper;
 
 public class ASMHandlerIncreaseReachDistance extends ASMClassHandler {
 	@Override
@@ -57,7 +57,7 @@ public class ASMHandlerIncreaseReachDistance extends ASMClassHandler {
 			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/techjar/vivecraftforge/util/ASMDelegator", "playerBlockReachDistance", obfuscated ? "(L" + ObfNames.ENTITYPLAYER + ";D)D" : "(Lnet/minecraft/entity/player/EntityPlayer;D)D", false));
 			insnList.add(new VarInsnNode(Opcodes.DSTORE, 7));
 			methodNode.instructions.insert(insert, insnList);
-			VivecraftForgeLog.debug("Inserted delegate method call.");
+			LogHelper.debug("Inserted delegate method call.");
 		}
 	}
 	
@@ -78,7 +78,7 @@ public class ASMHandlerIncreaseReachDistance extends ASMClassHandler {
 			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/techjar/vivecraftforge/util/ASMDelegator", "playerBlockReachDistance", obfuscated ? "(L" + ObfNames.ENTITYPLAYER + ";D)D" : "(Lnet/minecraft/entity/player/EntityPlayer;D)D", false));
 			insnList.add(new VarInsnNode(Opcodes.DSTORE, 13));
 			methodNode.instructions.insert(insert, insnList);
-			VivecraftForgeLog.debug("Inserted delegate method call.");
+			LogHelper.debug("Inserted delegate method call.");
 		}
 	}
 	
@@ -104,7 +104,7 @@ public class ASMHandlerIncreaseReachDistance extends ASMClassHandler {
 			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/techjar/vivecraftforge/util/ASMDelegator", "playerEntitySeenOverride", obfuscated ? "(L" + ObfNames.ENTITYPLAYER + ";Z)Z" : "(Lnet/minecraft/entity/player/EntityPlayer;Z)Z", false));
 			insnList.add(new VarInsnNode(Opcodes.ISTORE, 4));
 			methodNode.instructions.insert(insert, insnList);
-			VivecraftForgeLog.debug("Inserted delegate method call.");
+			LogHelper.debug("Inserted delegate method call.");
 		}
 	}
 }
