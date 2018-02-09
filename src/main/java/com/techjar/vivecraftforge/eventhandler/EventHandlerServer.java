@@ -92,7 +92,7 @@ public class EventHandlerServer {
 	public void onArrowLoose(ArrowLooseEvent event) {
 		EntityPlayer player = event.getEntityPlayer();
 		VRPlayerData data = PlayerTracker.getPlayerData(player);
-		if (data != null && !data.seated) {
+		if (data != null && !data.seated && data.bowDraw > 0) {
 			event.setCharge(Math.round(data.bowDraw * 20));
 		}
 	}
