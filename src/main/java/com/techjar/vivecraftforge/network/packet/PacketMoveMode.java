@@ -34,9 +34,7 @@ public class PacketMoveMode implements IPacket {
 
 	@Override
 	public void handleServer(EntityPlayerMP player) {
-		VRPlayerData data = PlayerTracker.getPlayerData(player);
-		if (data != null) {
-			data.freeMove = freeMove;
-		}
+		VRPlayerData data = PlayerTracker.getPlayerData(player, true);
+		data.freeMove = freeMove;
 	}
 }

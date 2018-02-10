@@ -36,8 +36,17 @@ public class PlayerTracker {
 		}
 	}
 
+	public static VRPlayerData getPlayerData(EntityPlayer entity, boolean createIfMissing) {
+		VRPlayerData data = players.get(entity.getGameProfile().getId());
+		if (data == null && createIfMissing) {
+			data = new VRPlayerData();
+			players.put(entity.getGameProfile().getId(), data);
+		}
+		return data;
+	}
+
 	public static VRPlayerData getPlayerData(EntityPlayer entity) {
-		return players.get(entity.getGameProfile().getId());
+		return getPlayerData(entity, false);
 	}
 
 	public static boolean hasPlayerData(EntityPlayer entity) {

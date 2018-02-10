@@ -62,17 +62,15 @@ public class PacketController0Data implements IPacket {
 
 	@Override
 	public void handleServer(EntityPlayerMP player) {
-		VRPlayerData data = PlayerTracker.getPlayerData(player);
-		if (data != null) {
-			data.handsReversed = handsReversed;
-			VRPlayerData.ObjectInfo info = data.controller0;
-			info.posX = posX;
-			info.posY = posY;
-			info.posZ = posZ;
-			info.rotW = rotW;
-			info.rotX = rotX;
-			info.rotY = rotY;
-			info.rotZ = rotZ;
-		}
+		VRPlayerData data = PlayerTracker.getPlayerData(player, true);
+		data.handsReversed = handsReversed;
+		VRPlayerData.ObjectInfo info = data.controller0;
+		info.posX = posX;
+		info.posY = posY;
+		info.posZ = posZ;
+		info.rotW = rotW;
+		info.rotX = rotX;
+		info.rotY = rotY;
+		info.rotZ = rotZ;
 	}
 }
