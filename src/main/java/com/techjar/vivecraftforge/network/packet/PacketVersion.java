@@ -42,23 +42,33 @@ public class PacketVersion implements IPacket {
 	}
 
 	@Override
-	public void handleClient(EntityPlayerSP player) {
+	public void handleClient(final EntityPlayerSP player) {
 	}
 
 	@Override
-	public void handleServer(EntityPlayerMP player) {
+	public void handleServer(final EntityPlayerMP player) {
 		VivecraftForge.packetPipeline.sendTo(new PacketVersion(VivecraftForge.MOD_NAME + " " + VivecraftForge.MOD_VERSION), player);
 		if (!message.contains("NONVR")) {
 			LogHelper.info("VR player joined: %s", message);
 			VivecraftForge.packetPipeline.sendTo(new PacketRequestData(), player);
 			VivecraftForge.packetPipeline.sendTo(new PacketTeleport(), player);
 			if (Config.climbeyEnabled) VivecraftForge.packetPipeline.sendTo(new PacketClimbing(Config.blockListMode, Config.blockList), player);
-			PlayerTracker.players.put(player.getGameProfile().getId(), new VRPlayerData());
+			player.getServerWorld().addScheduledTask(new Runnable() {
+				@Override
+				public void run() {
+					PlayerTracker.players.put(player.getGameProfile().getId(), new VRPlayerData());
+				}
+			});
 			if (Config.enableJoinMessages && !Config.joinMessageVR.isEmpty())
 				player.getServer().getPlayerList().sendMessage(new MessageFormatter().player(player).format(Config.joinMessageVR));
 		} else {
 			LogHelper.info("Non-VR player joined: %s", message);
-			PlayerTracker.companionPlayers.add(player.getGameProfile().getId());
+			player.getServerWorld().addScheduledTask(new Runnable() {
+				@Override
+				public void run() {
+					PlayerTracker.companionPlayers.add(player.getGameProfile().getId());
+				}
+			});
 			if (Config.enableJoinMessages && !Config.joinMessageCompanion.isEmpty())
 				player.getServer().getPlayerList().sendMessage(new MessageFormatter().player(player).format(Config.joinMessageCompanion));
 		}

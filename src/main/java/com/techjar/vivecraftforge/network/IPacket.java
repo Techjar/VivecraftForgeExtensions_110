@@ -10,7 +10,7 @@ public interface IPacket {
 
 	void decodePacket(ChannelHandlerContext context, ByteBuf buffer);
 
-	void handleClient(EntityPlayerSP player);
+	void handleClient(final EntityPlayerSP player);
 
-	void handleServer(EntityPlayerMP player);
+	void handleServer(final EntityPlayerMP player);
 }

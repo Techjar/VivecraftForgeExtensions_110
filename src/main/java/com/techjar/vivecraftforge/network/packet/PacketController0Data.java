@@ -57,20 +57,25 @@ public class PacketController0Data implements IPacket {
 	}
 
 	@Override
-	public void handleClient(EntityPlayerSP player) {
+	public void handleClient(final EntityPlayerSP player) {
 	}
 
 	@Override
-	public void handleServer(EntityPlayerMP player) {
-		VRPlayerData data = PlayerTracker.getPlayerData(player, true);
-		data.handsReversed = handsReversed;
-		VRPlayerData.ObjectInfo info = data.controller0;
-		info.posX = posX;
-		info.posY = posY;
-		info.posZ = posZ;
-		info.rotW = rotW;
-		info.rotX = rotX;
-		info.rotY = rotY;
-		info.rotZ = rotZ;
+	public void handleServer(final EntityPlayerMP player) {
+		player.getServerWorld().addScheduledTask(new Runnable() {
+			@Override
+			public void run() {
+				VRPlayerData data = PlayerTracker.getPlayerData(player, true);
+				data.handsReversed = handsReversed;
+				VRPlayerData.ObjectInfo info = data.controller0;
+				info.posX = posX;
+				info.posY = posY;
+				info.posZ = posZ;
+				info.rotW = rotW;
+				info.rotX = rotX;
+				info.rotY = rotY;
+				info.rotZ = rotZ;
+			}
+		});
 	}
 }

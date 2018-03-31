@@ -25,12 +25,17 @@ public class PacketWorldScale implements IPacket {
 	}
 
 	@Override
-	public void handleClient(EntityPlayerSP player) {
+	public void handleClient(final EntityPlayerSP player) {
 	}
 
 	@Override
-	public void handleServer(EntityPlayerMP player) {
-		VRPlayerData data = PlayerTracker.getPlayerData(player, true);
-		data.worldScale = worldScale;
+	public void handleServer(final EntityPlayerMP player) {
+		player.getServerWorld().addScheduledTask(new Runnable() {
+			@Override
+			public void run() {
+				VRPlayerData data = PlayerTracker.getPlayerData(player, true);
+				data.worldScale = worldScale;
+			}
+		});
 	}
 }

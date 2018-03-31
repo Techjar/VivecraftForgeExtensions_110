@@ -19,10 +19,10 @@ public class PacketRequestData implements IPacket {
 	}
 
 	@Override
-	public void handleClient(EntityPlayerSP player) {
+	public void handleClient(final EntityPlayerSP player) {
 	}
 
 	@Override
-	public void handleServer(EntityPlayerMP player) {
+	public void handleServer(final EntityPlayerMP player) {
 	}
 }
