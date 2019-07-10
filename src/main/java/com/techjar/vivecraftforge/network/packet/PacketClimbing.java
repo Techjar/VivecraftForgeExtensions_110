@@ -3,6 +3,7 @@ package com.techjar.vivecraftforge.network.packet;
 import com.google.common.base.Throwables;
 import com.techjar.vivecraftforge.network.IPacket;
 import com.techjar.vivecraftforge.util.BlockListMode;
+import com.techjar.vivecraftforge.util.ReflectionHelper;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -55,5 +56,6 @@ public class PacketClimbing implements IPacket {
 	@Override
 	public void handleServer(final EntityPlayerMP player) {
 		player.fallDistance = 0;
+		ReflectionHelper.NetHandlerPlayServer_floatingTickCount.set(player.connection, 0);
 	}
 }
