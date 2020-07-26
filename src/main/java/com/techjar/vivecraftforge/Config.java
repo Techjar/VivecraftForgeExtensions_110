@@ -1,125 +1,100 @@
 package com.techjar.vivecraftforge;
 
-import com.google.common.collect.Lists;
-import com.google.common.primitives.Ints;
 import com.techjar.vivecraftforge.util.BlockListMode;
-import com.techjar.vivecraftforge.util.LogHelper;
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
-import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.List;
 
 public class Config {
-	public static Configuration config;
-	public static boolean vrOnly;
-	public static double vrOnlyKickDelay;
-	public static boolean printMoney;
-	public static String vrOnlyKickMessage;
-	public static boolean enableJoinMessages;
-	public static String joinMessageVR;
-	public static String joinMessageCompanion;
-	public static double creeperSwellDistance;
-	public static float movedTooQuicklyThreshold;
-	public static double movedWronglyThreshold;
-	public static boolean vrVsVR;
-	public static boolean vrVsSeatedVR;
-	public static boolean vrVsNonVR;
-	public static boolean seatedVrVsSeatedVR;
-	public static boolean seatedVrVsNonVR;
-	public static float bowStandingMul;
-	public static float bowSeatedMul;
-	public static float bowStandingHeadshotMul;
-	public static float bowSeatedHeadshotMul;
-	public static boolean climbeyEnabled;
-	public static BlockListMode blockListMode;
-	public static ArrayList<String> blockList;
+	public static ForgeConfigSpec config;
 
-	private Config() {
-	}
+	public static ForgeConfigSpec.BooleanValue vrOnly;
+	public static ForgeConfigSpec.DoubleValue vrOnlyKickDelay;
+	public static ForgeConfigSpec.BooleanValue printMoney;
+	public static ForgeConfigSpec.ConfigValue<String> vrOnlyKickMessage;
+	public static ForgeConfigSpec.BooleanValue enableJoinMessages;
+	public static ForgeConfigSpec.ConfigValue<String> joinMessageVR;
+	public static ForgeConfigSpec.ConfigValue<String> joinMessageNonVR;
+	public static ForgeConfigSpec.DoubleValue creeperSwellDistance;
+	public static ForgeConfigSpec.BooleanValue vrVsVR;
+	public static ForgeConfigSpec.BooleanValue vrVsSeatedVR;
+	public static ForgeConfigSpec.BooleanValue vrVsNonVR;
+	public static ForgeConfigSpec.BooleanValue seatedVrVsSeatedVR;
+	public static ForgeConfigSpec.BooleanValue seatedVrVsNonVR;
+	public static ForgeConfigSpec.ConfigValue<Float> bowStandingMul;
+	public static ForgeConfigSpec.ConfigValue<Float> bowSeatedMul;
+	public static ForgeConfigSpec.ConfigValue<Float> bowStandingHeadshotMul;
+	public static ForgeConfigSpec.ConfigValue<Float> bowSeatedHeadshotMul;
+	public static ForgeConfigSpec.BooleanValue climbeyEnabled;
+	public static ForgeConfigSpec.EnumValue<BlockListMode> blockListMode;
+	public static ForgeConfigSpec.ConfigValue<List<? extends String>> blockList;
+	public static ForgeConfigSpec.BooleanValue teleportEnabled;
+	public static ForgeConfigSpec.BooleanValue teleportLimited;
+	public static ForgeConfigSpec.IntValue teleportLimitUp;
+	public static ForgeConfigSpec.IntValue teleportLimitDown;
+	public static ForgeConfigSpec.IntValue teleportLimitHoriz;
+	public static ForgeConfigSpec.BooleanValue worldScaleLimited;
+	public static ForgeConfigSpec.DoubleValue worldScaleMin;
+	public static ForgeConfigSpec.DoubleValue worldScaleMax;
 
-	public static void init(File file) {
-		if (FMLLaunchHandler.side() != Side.SERVER) return;
-		config = new Configuration(file);
-		config.load();
-		// General
-		vrOnly = config.get("general", "vronly", false, "Enable to allow only VR players to play.").getBoolean();
-		vrOnlyKickDelay = config.get("general", "vronlykickdelay", 5.0, "How many seconds to wait before kicking non-VR players. Default: 5.0, Minimum: 5.0", 5.0, Double.MAX_VALUE).getDouble();
-		printMoney = config.get("general", "printmoney", false, "Don't get caught using this!").getBoolean();
-		// Messages
-		vrOnlyKickMessage = config.get("messages", "vronlykickmessage", "This server only allows VR players.", "Kick message displayed to non-VR players, if vronly is enabled.").getString();
-		enableJoinMessages = config.get("messages", "joinmessages", false, "Enables or disables all join messages.").getBoolean();
-		joinMessageVR = config.get("messages", "joinmessagevr", "\u00A79%player% has joined using \u00A76VR\u00A79!", "Message displayed when a player joins using VR. Leave blank to disable.").getString();
-		joinMessageCompanion = config.get("messages", "joinmessagecompanion", "\u00A7a%player% has joined using non-VR companion!", "Message displayed when a player joins using the non-VR companion. Leave blank to disable.").getString();
-		// VR Changes
-		creeperSwellDistance = config.get("vrchanges", "creeperswelldistance", 1.75, "Distance at which creepers swell and explode for VR players. Default: 1.75, Vanilla: 3").getDouble();
-		movedTooQuicklyThreshold = (float)config.get("vrchanges", "movedtooquicklythreshold", 64.0, "Increase this if you experience rubber banding when teleporting.").getDouble();
-		movedWronglyThreshold = config.get("vrchanges", "movedwronglythreshold", 15.0, "Increase this if you experience rubber banding when teleporting.").getDouble();
-		// PvP
-		vrVsVR = config.get("pvp", "vrvsvr", true, "Allows standing VR players to attack standing VR players.").getBoolean();
-		vrVsSeatedVR = config.get("pvp", "vrvsseatedvr", true, "Allows standing VR players to attack seated VR players.").getBoolean();
-		vrVsNonVR = config.get("pvp", "vrvsnonvr", true, "Allows standing VR players to attack non-VR players.").getBoolean();
-		seatedVrVsSeatedVR = config.get("pvp", "seatedvrvsseatedvr", true, "Allows seated VR players to attack seated VR players.").getBoolean();
-		seatedVrVsNonVR = config.get("pvp", "seatedvrvsnonvr", true, "Allows seated VR players to attack non-VR players.").getBoolean();
-		// Bow
-		bowStandingMul = (float)config.get("bow", "standingmultiplier", 2.0, "Archery damage multiplier for standing VR players. Default: 2.0").getDouble();
-		bowSeatedMul = (float)config.get("bow", "seatedmultiplier", 1.0, "Archery damage multiplier for seated VR players. Default: 1.0").getDouble();
-		bowStandingHeadshotMul = (float)config.get("bow", "standingheadshotmultiplier", 3.0, "Archery headshot damage multiplier for standing VR players. Default: 3.0").getDouble();
-		bowSeatedHeadshotMul = (float)config.get("bow", "seatedheadshotmultiplier", 2.0, "Archery headshot damage multiplier for seated VR players. Default: 2.0").getDouble();
-		// Climbey
-		climbeyEnabled = config.get("climbey", "enabled", true, "Whether or not climbey is allowed on this server.").getBoolean();
-		{
-			Property prop = config.get("climbey", "blocklist", new String[]{"minecraft:wool:0", "minecraft:dirt", "grass"}, "List of blocks to whitelist or blacklist, in format blockname, blockname:meta, blockid or blockid:meta.");
-			blockList = Lists.newArrayList(prop.getStringList());
-			boolean changed = false;
-			for (Iterator<String> it = blockList.iterator(); it.hasNext();) {
-				String str = it.next();
-				String fullStr = str;
-				int colon = str.lastIndexOf(':');
-				if (colon != -1) {
-					String meta = str.substring(colon + 1);
-					str = str.substring(0, colon);
-					if (Ints.tryParse(meta) == null) {
-						if (str.indexOf(':') != -1) { // Extra colons, must be meta
-							LogHelper.warning("Invalid meta for blocklist item: %s", fullStr);
-							it.remove();
-							changed = true;
-							continue;
-						} else { // Only colon, must be part of block name
-							str = fullStr;
-						}
-					}
-				}
-				if (Ints.tryParse(str) != null) {
-					if (Block.getBlockById(Integer.parseInt(str)) == Blocks.AIR) {
-						LogHelper.warning("Unknown block for blocklist item: %s", fullStr);
-						it.remove();
-						changed = true;
-					}
-				} else {
-					if (Block.getBlockFromName(str) == Blocks.AIR || Block.getBlockFromName(str) == null) {
-						LogHelper.warning("Unknown block for blocklist item: %s", fullStr);
-						it.remove();
-						changed = true;
-					}
-				}
-			}
-			if (changed) prop.set(blockList.toArray(new String[blockList.size()]));
-		}
-		{
-			Property prop = config.get("climbey", "blocklistmode", BlockListMode.DISABLED.toString(), "Mode for block list. DISABLED: All blocks are climbable. WHITELIST: Only blocks on list are climbable. BLACKLIST: All blocks except those on list are climbable.");
-			try {
-				blockListMode = BlockListMode.valueOf(prop.getString());
-			} catch (IllegalArgumentException ex) {
-				prop.set(prop.getDefault());
-				blockListMode = BlockListMode.valueOf(prop.getString());
-			}
-		}
-		if (config.hasChanged()) config.save();
+	static {
+		ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
+
+		builder.comment("General settings").push("general");
+		vrOnly = builder.comment("Enable to allow only VR players to play.").define("vronly", false);
+		vrOnlyKickDelay = builder.comment("How many seconds to wait before kicking non-VR players.").defineInRange("vronlykickdelay", 5.0, 5.0, Double.MAX_VALUE);
+		printMoney = builder.comment("Don't get caught using this!").define("printmoney", false);
+		builder.pop(); // general
+
+		builder.comment("Chat messages").push("messages");
+		vrOnlyKickMessage = builder.comment("Kick message displayed to non-VR players, if vronly is enabled.").define("vronlykickmessage", "This server only allows VR players.");
+		enableJoinMessages = builder.comment("Enable or disable all join messages.").define("enablejoinmessages", false);
+		joinMessageVR = builder.comment("Message displayed when a player joins using VR. Leave blank to disable.").define("joinmessagevr", "\u00A79%s has joined using \u00A76VR\u00A79!");
+		joinMessageNonVR = builder.comment("Message displayed when a player joins using the non-VR companion. Leave blank to disable.").define("joinmessagecompanion", "\u00A7a%s has joined using non-VR companion!");
+		builder.pop(); // messages
+
+		builder.comment("Vanilla modifications for VR players").push("vrchanges");
+		creeperSwellDistance = builder.comment("Distance at which creepers swell and explode for VR players. Vanilla: 3").defineInRange("creeperswelldistance", 1.75, 1, 3);
+		builder.comment("Bow damage adjustments").push("bow");
+		bowStandingMul = builder.comment("Archery damage multiplier for standing VR players.").defineInRange("standingmultiplier", 2.0f, 1.0f, 3.0f, Float.class);
+		bowSeatedMul = builder.comment("Archery damage multiplier for seated VR players.").defineInRange("seatedmultiplier", 1.0f, 1.0f, 3.0f, Float.class);
+		bowStandingHeadshotMul = builder.comment("Archery headshot damage multiplier for standing VR players.").defineInRange("standingheadshotmultiplier", 3.0f, 1.0f, 3.0f, Float.class);
+		bowSeatedHeadshotMul = builder.comment("Archery headshot damage multiplier for seated VR players.").defineInRange("seatedheadshotmultiplier", 2.0f, 1.0f, 3.0f, Float.class);
+		builder.pop(); // bow
+		builder.pop(); // vrchanges
+
+		builder.comment("VR vs. non-VR vs. seated player PVP settings").push("pvp");
+		vrVsVR = builder.comment("Allow standing VR players to attack standing VR players.").define("vrvsvr", true);
+		vrVsSeatedVR = builder.comment("Allow standing VR players to attack seated VR players.").define("vrvsseatedvr", true);
+		vrVsNonVR = builder.comment("Allow standing VR players to attack non-VR players.").define("vrvsnonvr", true);
+		seatedVrVsSeatedVR = builder.comment("Allow seated VR players to attack seated VR players.").define("seatedvrvsseatedvr", true);
+		seatedVrVsNonVR = builder.comment("Allow seated VR players to attack non-VR players.").define("seatedvrvsnonvr", true);
+		builder.pop(); // pvp
+
+		builder.comment("Climbey motion settings").push("climbey");
+		climbeyEnabled = builder.comment("Whether or not climbey is allowed on this server.").define("enabled", true);
+		blockListMode = builder.comment("Mode for block list.").defineEnum("blocklistmode", BlockListMode.DISABLED);
+		blockList = builder.comment("List of blocks to whitelist or blacklist").defineList("blocklist", Arrays.asList("white_wool", "dirt", "grass_block"), (s) -> s instanceof String && GameRegistry.findRegistry(Block.class).containsKey(new ResourceLocation((String)s)));
+		builder.pop(); // climbey
+
+		builder.comment("Teleport settings").push("teleport");
+		teleportEnabled = builder.comment("Whether teleport is allowed. Recommended for players prone to VR sickness").define("enabled", true);
+		teleportLimited = builder.comment("Whether to limit teleport distance and frequency in survival").define("limitedsurvival", false);
+		teleportLimitUp = builder.comment("Maximum blocks players can teleport up, set 0 to disable").defineInRange("uplimit", 1, 0, 16);
+		teleportLimitDown = builder.comment("Maximum blocks players can teleport down, set 0 to disable").defineInRange("downlimit", 4, 0, 16);
+		teleportLimitHoriz = builder.comment("Maximum blocks players can teleport horizontally, set 0 to disable").defineInRange("horizontallimit", 16, 0, 32);
+		builder.pop(); // teleport
+
+		builder.comment("World scale settings").push("worldscale");
+		worldScaleLimited = builder.comment("Limit the range of world scale clients may use").define("limitrange", false);
+		worldScaleMax = builder.comment("Upper limit of world scale").defineInRange("max", 2, 0.1, 100);
+		worldScaleMin = builder.comment("Lower limit of world scale").defineInRange("min", 0.5, 0.1, 100);
+		builder.pop(); // worldscale
+
+		config = builder.build();
 	}
 }

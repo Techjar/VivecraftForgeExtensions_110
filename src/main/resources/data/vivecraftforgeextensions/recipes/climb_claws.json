@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "E E",
+    "S S"
+  ],
+  "key": {
+    "E": {
+      "item": "minecraft:spider_eye"
+    },
+    "S": {
+      "item": "minecraft:shears"
+    }
+  },
+  "result": {
+    "item": "minecraft:shears",
+    "count": 1,
+    "nbt": {
+      "display": {
+        "Name": "{\"text\":\"Climb Claws\"}"
+      },
+      "Unbreakable": true,
+      "HideFlags": 4
+    }
+  }
+}

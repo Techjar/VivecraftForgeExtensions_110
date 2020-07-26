@@ -1,6 +1,7 @@
 package com.techjar.vivecraftforge.util;
 
-import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.entity.ai.goal.CreeperSwellGoal;
+import net.minecraft.network.play.ServerPlayNetHandler;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -9,7 +10,15 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class ReflectionHelper {
-	public static final ReflectionField NetHandlerPlayServer_floatingTickCount = new ReflectionField(NetHandlerPlayServer.class, "field_147365_f", "C", "floatingTickCount");
+	// stuff goes here if ever needed
+
+	public static Class reflectClass(String name) {
+		try {
+			return Class.forName(name);
+		} catch (ReflectiveOperationException e) {
+			throw new RuntimeException("reflecting class " + name, e);
+		}
+	}
 
 	public static class ReflectionField {
 		private final Class<?> clazz;
@@ -173,7 +182,7 @@ public class ReflectionHelper {
 					sb.append(" with params ");
 					sb.append(Arrays.stream(params).map(Class::getName).collect(Collectors.joining(",")));
 				}
-				throw new RuntimeException("reflecting constructor " + sb.toString() + " in " + clazz.toString(), e);
+				throw new RuntimeException("reflecting constructor" + sb.toString() + " in " + clazz.toString(), e);
 			}
 
 			constructor.setAccessible(true);

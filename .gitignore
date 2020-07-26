@@ -23,7 +23,6 @@ build
 .gradle
 eclipse
 run
-gradle.properties
 
 # other project things
 libs

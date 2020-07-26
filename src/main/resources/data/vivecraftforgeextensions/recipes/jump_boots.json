@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "S",
+    "B"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:slime_block"
+    },
+    "B": {
+      "item": "minecraft:leather_boots"
+    }
+  },
+  "result": {
+    "item": "minecraft:leather_boots",
+    "count": 1,
+    "nbt": {
+      "display": {
+        "Name": "{\"text\":\"Jump Boots\"}"
+      },
+      "Unbreakable": true,
+      "HideFlags": 4
+    }
+  }
+}

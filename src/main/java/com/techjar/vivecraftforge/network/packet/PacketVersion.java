@@ -1,18 +1,20 @@
 package com.techjar.vivecraftforge.network.packet;
 
-import com.google.common.base.Charsets;
+import java.util.HashMap;
+import java.util.function.Supplier;
+
 import com.techjar.vivecraftforge.Config;
 import com.techjar.vivecraftforge.VivecraftForge;
+import com.techjar.vivecraftforge.network.ChannelHandler;
 import com.techjar.vivecraftforge.network.IPacket;
-import com.techjar.vivecraftforge.util.MessageFormatter;
+import com.techjar.vivecraftforge.util.LogHelper;
 import com.techjar.vivecraftforge.util.PlayerTracker;
 import com.techjar.vivecraftforge.util.VRPlayerData;
-import com.techjar.vivecraftforge.util.LogHelper;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.ChatType;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 /*
  * Why the fuck does the client want a length-prefixed string, but sends
@@ -30,47 +32,59 @@ public class PacketVersion implements IPacket {
 	}
 
 	@Override
-	public void encodePacket(ChannelHandlerContext context, ByteBuf buffer) {
-		ByteBufUtils.writeUTF8String(buffer, message);
+	public void encode(final PacketBuffer buffer) {
+		buffer.writeString(message);
 	}
 
 	@Override
-	public void decodePacket(ChannelHandlerContext context, ByteBuf buffer) {
-		byte[] bytes = new byte[buffer.readableBytes()];
-		buffer.readBytes(bytes);
-		message = new String(bytes, Charsets.UTF_8);
+	public void decode(final PacketBuffer buffer) {
+		message = buffer.readString();
 	}
 
 	@Override
-	public void handleClient(final EntityPlayerSP player) {
+	public void handleClient(final Supplier<NetworkEvent.Context> context) {
 	}
 
 	@Override
-	public void handleServer(final EntityPlayerMP player) {
-		VivecraftForge.packetPipeline.sendTo(new PacketVersion(VivecraftForge.MOD_NAME + " " + VivecraftForge.MOD_VERSION), player);
+	public void handleServer(final Supplier<NetworkEvent.Context> context) {
+		ServerPlayerEntity player = context.get().getSender();
+		ChannelHandler.sendTo(new PacketVersion(VivecraftForge.MOD_INFO.getDisplayName() + " " + VivecraftForge.MOD_INFO.getVersion()), player);
 		if (!message.contains("NONVR")) {
 			LogHelper.info("VR player joined: %s", message);
-			VivecraftForge.packetPipeline.sendTo(new PacketRequestData(), player);
-			VivecraftForge.packetPipeline.sendTo(new PacketTeleport(), player);
-			if (Config.climbeyEnabled) VivecraftForge.packetPipeline.sendTo(new PacketClimbing(Config.blockListMode, Config.blockList), player);
-			player.getServerWorld().addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					PlayerTracker.players.put(player.getGameProfile().getId(), new VRPlayerData());
-				}
+			ChannelHandler.sendTo(new PacketRequestData(), player);
+			ChannelHandler.sendTo(new PacketTeleport(), player);
+
+			if (Config.climbeyEnabled.get())
+				ChannelHandler.sendTo(new PacketClimbing(Config.blockListMode.get(), Config.blockList.get()), player);
+
+			if (Config.teleportLimited.get()) {
+				HashMap<String, Object> map = new HashMap<>();
+				map.put("limitedTeleport", true);
+				map.put("teleportLimitUp", Config.teleportLimitUp.get());
+				map.put("teleportLimitDown", Config.teleportLimitDown.get());
+				map.put("teleportLimitHoriz", Config.teleportLimitHoriz.get());
+				ChannelHandler.sendTo(new PacketSettingOverride(map), player);
+			}
+
+			if (Config.worldScaleLimited.get()) {
+				HashMap<String, Object> map = new HashMap<>();
+				map.put("worldScale.min", Config.worldScaleMin.get());
+				map.put("worldScale.max", Config.worldScaleMax.get());
+				ChannelHandler.sendTo(new PacketSettingOverride(map), player);
+			}
+
+			context.get().enqueueWork(() -> {
+				PlayerTracker.players.put(player.getGameProfile().getId(), new VRPlayerData());
+				if (Config.enableJoinMessages.get() && !Config.joinMessageVR.get().isEmpty())
+					player.getServer().getPlayerList().func_232641_a_(new StringTextComponent(String.format(Config.joinMessageVR.get(), player.getDisplayName())), ChatType.SYSTEM, net.minecraft.util.Util.DUMMY_UUID);
 			});
-			if (Config.enableJoinMessages && !Config.joinMessageVR.isEmpty())
-				player.getServer().getPlayerList().sendMessage(new MessageFormatter().player(player).format(Config.joinMessageVR));
 		} else {
 			LogHelper.info("Non-VR player joined: %s", message);
-			player.getServerWorld().addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					PlayerTracker.companionPlayers.add(player.getGameProfile().getId());
-				}
+			context.get().enqueueWork(() -> {
+				PlayerTracker.nonvrPlayers.add(player.getGameProfile().getId());
+				if (Config.enableJoinMessages.get() && !Config.joinMessageNonVR.get().isEmpty())
+					player.getServer().getPlayerList().func_232641_a_(new StringTextComponent(String.format(Config.joinMessageNonVR.get(), player.getDisplayName())), ChatType.SYSTEM, net.minecraft.util.Util.DUMMY_UUID);
 			});
-			if (Config.enableJoinMessages && !Config.joinMessageCompanion.isEmpty())
-				player.getServer().getPlayerList().sendMessage(new MessageFormatter().player(player).format(Config.joinMessageCompanion));
 		}
 	}
 }

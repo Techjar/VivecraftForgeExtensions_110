@@ -1,0 +1,25 @@
+modLoader="javafml"
+loaderVersion="[32,)"
+
+[[mods]]
+    modId="vivecraftforgeextensions"
+    version="1.0.0"
+    displayName="Vivecraft Forge Extensions"
+    displayURL="https://www.curseforge.com/minecraft/mc-mods/vivecraft-forge-extensions"
+    logoFile="logo.png"
+    authors="Techjar"
+    description="Forge companion mod for Vivecraft which handles packets and modifies base code for VR players."
+
+[[dependencies.vivecraftforgeextensions]]
+    modId="forge"
+    mandatory=true
+    versionRange="[32,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.vivecraftforgeextensions]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.16.1]"
+    ordering="NONE"
+    side="BOTH"

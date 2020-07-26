@@ -1,84 +1,74 @@
 package com.techjar.vivecraftforge.network;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-
-import net.minecraft.entity.player.EntityPlayerMP;
+import com.techjar.vivecraftforge.util.LogHelper;
 
 import com.techjar.vivecraftforge.network.packet.*;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
-import net.minecraftforge.fml.common.network.FMLIndexedMessageToMessageCodec;
-import net.minecraftforge.fml.common.network.FMLOutboundHandler;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 
-import java.util.EnumMap;
+public class ChannelHandler {
+	private static SimpleChannel CHANNEL;
 
-public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket> {
-	private EnumMap<Side, FMLEmbeddedChannel> channels;
+	public static void init() {
+		CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation("vivecraft", "data"), () -> "lol", (s) -> true, (s) -> true);
 
-	private ChannelHandler() {
-		this.addDiscriminator(0, PacketVersion.class);
-		this.addDiscriminator(1, PacketRequestData.class);
-		this.addDiscriminator(2, PacketHeadData.class);
-		this.addDiscriminator(3, PacketController0Data.class);
-		this.addDiscriminator(4, PacketController1Data.class);
-		this.addDiscriminator(5, PacketWorldScale.class);
-		this.addDiscriminator(6, PacketDraw.class);
-		this.addDiscriminator(7, PacketMoveMode.class);
-		this.addDiscriminator(8, PacketUberPacket.class);
-		this.addDiscriminator(9, PacketTeleport.class);
-		this.addDiscriminator(10, PacketClimbing.class);
+		addDiscriminator(0, new Message<>(PacketVersion.class));
+		addDiscriminator(1, new Message<>(PacketRequestData.class));
+		addDiscriminator(2, new Message<>(PacketHeadData.class));
+		addDiscriminator(3, new Message<>(PacketController0Data.class));
+		addDiscriminator(4, new Message<>(PacketController1Data.class));
+		addDiscriminator(5, new Message<>(PacketWorldScale.class));
+		addDiscriminator(6, new Message<>(PacketDraw.class));
+		addDiscriminator(7, new Message<>(PacketMoveMode.class));
+		addDiscriminator(8, new Message<>(PacketUberPacket.class));
+		addDiscriminator(9, new Message<>(PacketTeleport.class));
+		addDiscriminator(10, new Message<>(PacketClimbing.class));
+		addDiscriminator(11, new Message<>(PacketSettingOverride.class));
+		addDiscriminator(12, new Message<>(PacketHeight.class));
+		addDiscriminator(13, new Message<>(PacketActiveHand.class));
+
+		LogHelper.debug("Networking initialized");
 	}
 
-	public static ChannelHandler init() {
-		ChannelHandler channelHandler = new ChannelHandler();
-		channelHandler.channels = NetworkRegistry.INSTANCE.newChannel("Vivecraft", channelHandler, new PacketHandlerServer());
-		if (FMLCommonHandler.instance().getSide().isClient()) {
-			FMLEmbeddedChannel channel = channelHandler.channels.get(Side.CLIENT);
-			String codec = channel.findChannelHandlerNameForType(ChannelHandler.class);
-			channel.pipeline().addAfter(codec, "ClientHandler", new PacketHandlerClient());
-		}
-		return channelHandler;
+	private static <T extends IPacket> void addDiscriminator(int d, Message<T> message) {
+		CHANNEL.registerMessage(d, message.getPacketClass(), message::encode, message::decode, message::handle);
 	}
 
-	@Override
-	public void encodeInto(ChannelHandlerContext ctx, IPacket msg, ByteBuf target) throws Exception {
-		msg.encodePacket(ctx, target);
+	public static void sendToAll(IPacket message) {
+		CHANNEL.send(PacketDistributor.ALL.noArg(), message);
 	}
 
-	@Override
-	public void decodeInto(ChannelHandlerContext ctx, ByteBuf source, IPacket msg) {
-		msg.decodePacket(ctx, source);
+	public static void sendTo(IPacket message, ServerPlayerEntity player) {
+		CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), message);
 	}
 
-	public void sendToAll(IPacket message) {
-		this.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
-		this.channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+	public static void sendToAllAround(IPacket message, PacketDistributor.TargetPoint point) {
+		CHANNEL.send(PacketDistributor.NEAR.with(() -> point), message);
 	}
 
-	public void sendTo(IPacket message, EntityPlayerMP player) {
-		this.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
-		this.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player);
-		this.channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+	public static void sendToAllTrackingEntity(IPacket message, ServerPlayerEntity player) {
+		CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), message);
 	}
 
-	public void sendToAllAround(IPacket message, NetworkRegistry.TargetPoint point) {
-		this.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
-		this.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(point);
-		this.channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+	public static void sendToAllTrackingEntityAndSelf(IPacket message, ServerPlayerEntity player) {
+		CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), message);
 	}
 
-	public void sendToDimension(IPacket message, int dimensionId) {
-		this.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.DIMENSION);
-		this.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(dimensionId);
-		this.channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+	public static void sendToAllTrackingChunk(IPacket message, Chunk chunk) {
+		CHANNEL.send(PacketDistributor.TRACKING_CHUNK.with(() -> chunk), message);
 	}
 
-	public void sendToServer(IPacket message) {
-		this.channels.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
-		this.channels.get(Side.CLIENT).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+	public static void sendToAllInDimension(IPacket message, RegistryKey<World> dimension) {
+		CHANNEL.send(PacketDistributor.DIMENSION.with(() -> dimension), message);
+	}
+
+	public static void sendToServer(IPacket message) {
+		CHANNEL.sendToServer(message);
 	}
 }

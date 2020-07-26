@@ -1,28 +1,28 @@
 package com.techjar.vivecraftforge.network.packet;
 
+import java.util.function.Supplier;
+
 import com.techjar.vivecraftforge.network.IPacket;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 public class PacketRequestData implements IPacket {
 	public PacketRequestData() {
 	}
 
 	@Override
-	public void encodePacket(ChannelHandlerContext context, ByteBuf buffer) {
+	public void encode(final PacketBuffer buffer) {
 	}
 
 	@Override
-	public void decodePacket(ChannelHandlerContext context, ByteBuf buffer) {
+	public void decode(final PacketBuffer buffer) {
 	}
 
 	@Override
-	public void handleClient(final EntityPlayerSP player) {
+	public void handleClient(final Supplier<NetworkEvent.Context> context) {
 	}
 
 	@Override
-	public void handleServer(final EntityPlayerMP player) {
+	public void handleServer(final Supplier<NetworkEvent.Context> context) {
 	}
 }

@@ -1,18 +1,17 @@
 package com.techjar.vivecraftforge.network.packet;
 
-import com.google.common.base.Throwables;
+import com.techjar.vivecraftforge.Config;
 import com.techjar.vivecraftforge.network.IPacket;
 import com.techjar.vivecraftforge.util.BlockListMode;
-import com.techjar.vivecraftforge.util.ReflectionHelper;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
 
 /*
  * For whatever reason this uses a serializer instead of just
@@ -20,42 +19,37 @@ import java.util.ArrayList;
  */
 public class PacketClimbing implements IPacket {
 	public BlockListMode blockListMode;
-	public ArrayList<String> blockList;
+	public List<? extends String> blockList;
 
 	public PacketClimbing() {
 	}
 
-	public PacketClimbing(BlockListMode blockListMode, ArrayList<String> blockList) {
+	public PacketClimbing(BlockListMode blockListMode, List<? extends String> blockList) {
 		this.blockListMode = blockListMode;
 		this.blockList = blockList;
 	}
 
 	@Override
-	public void encodePacket(ChannelHandlerContext context, ByteBuf buffer) {
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			ObjectOutputStream stream = new ObjectOutputStream(baos);
-			stream.writeByte((byte)blockListMode.ordinal());
-			stream.writeObject(blockList);
-			stream.flush();
-			buffer.writeBytes(baos.toByteArray());
-			stream.close();
-		} catch (IOException ex) {
-			Throwables.propagate(ex);
+	public void encode(final PacketBuffer buffer) {
+		buffer.writeByte(1); // allow climbey
+		buffer.writeByte(Config.blockListMode.get().ordinal());
+		for (String s : Config.blockList.get()) {
+			buffer.writeString(s);
 		}
 	}
 
 	@Override
-	public void decodePacket(ChannelHandlerContext context, ByteBuf buffer) {
+	public void decode(final PacketBuffer buffer) {
 	}
 
 	@Override
-	public void handleClient(final EntityPlayerSP player) {
+	public void handleClient(final Supplier<NetworkEvent.Context> context) {
 	}
 
 	@Override
-	public void handleServer(final EntityPlayerMP player) {
+	public void handleServer(final Supplier<NetworkEvent.Context> context) {
+		ServerPlayerEntity player = context.get().getSender();
 		player.fallDistance = 0;
-		ReflectionHelper.NetHandlerPlayServer_floatingTickCount.set(player.connection, 0);
+		player.connection.floatingTickCount = 0;
 	}
 }

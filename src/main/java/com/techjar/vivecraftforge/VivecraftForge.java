@@ -1,49 +1,44 @@
 package com.techjar.vivecraftforge;
 
+import com.techjar.vivecraftforge.eventhandler.EventHandlerServer;
 import com.techjar.vivecraftforge.network.ChannelHandler;
-import com.techjar.vivecraftforge.proxy.ProxyCommon;
 import com.techjar.vivecraftforge.util.Util;
 import com.techjar.vivecraftforge.util.LogHelper;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.forgespi.language.IModInfo;
 
-@Mod(modid = "vivecraftforgeextensions", name = "Vivecraft Forge Extensions", version = "@VERSION@", acceptableRemoteVersions = "*", acceptedMinecraftVersions = "1.12.2", certificateFingerprint = "fd9d04044a812606cd8b960f9512e4e30cd25710")
+@Mod("vivecraftforgeextensions")
 public class VivecraftForge {
-	public static final String MOD_ID = "vivecraftforgeextensions";
-	public static final String MOD_NAME = "Vivecraft Forge Extensions";
-	public static final String MOD_VERSION = "@VERSION@";
+	public static IModInfo MOD_INFO;
 
-	@Mod.Instance("vivecraftforgeextensions")
-	public static VivecraftForge instance;
-	
-	@SidedProxy(clientSide = "com.techjar.vivecraftforge.proxy.ProxyClient", serverSide = "com.techjar.vivecraftforge.proxy.ProxyServer")
-	public static ProxyCommon proxy;
-	
-	public static ChannelHandler packetPipeline;
-
-	@Mod.EventHandler
-	public void preInit(FMLPreInitializationEvent event) {
-		Config.init(event.getSuggestedConfigurationFile());
+	public VivecraftForge() {
+		MOD_INFO = ModLoadingContext.get().getActiveContainer().getModInfo();
+		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+		DistExecutor.safeRunWhenOn(Dist.DEDICATED_SERVER, () -> () -> serverInit(eventBus));
 	}
 
-	@Mod.EventHandler
-	public void load(FMLInitializationEvent event) {
-		proxy.registerRecipes();
-		proxy.registerNetwork();
-		proxy.registerEventHandlers();
+	private void serverInit(IEventBus eventBus) {
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.config);
+		eventBus.addListener(this::onSetup);
+		MinecraftForge.EVENT_BUS.addListener(this::onServerStarting);
+		MinecraftForge.EVENT_BUS.register(new EventHandlerServer());
 	}
 
-	@Mod.EventHandler
-	public void postInit(FMLPostInitializationEvent event) {
-		if (Config.printMoney) LogHelper.warning(Util.getMoney());
+	private void onSetup(FMLCommonSetupEvent event) {
+		ChannelHandler.init();
 	}
 
-	@Mod.EventHandler
-	public void onFingerprintViolation(FMLFingerprintViolationEvent event) {
-		LogHelper.warning("Invalid fingerprint detected!");
+	private void onServerStarting(FMLServerStartingEvent event) {
+		if (Config.printMoney.get())
+			LogHelper.warning(Util.getMoney());
 	}
 }

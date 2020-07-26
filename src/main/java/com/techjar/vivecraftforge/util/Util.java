@@ -1,8 +1,8 @@
 package com.techjar.vivecraftforge.util;
 
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ArrowEntity;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -24,20 +24,20 @@ public class Util {
 	/*
 	 * This is mostly copied from VSE
 	 */
-	public static boolean isHeadshot(EntityLivingBase target, EntityArrow arrow) {
-		if (target.isRiding()) return false;
-		if (target instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer)target;
+	public static boolean isHeadshot(LivingEntity target, ArrowEntity arrow) {
+		if (target.isPassenger()) return false;
+		if (target instanceof PlayerEntity) {
+			PlayerEntity player = (PlayerEntity)target;
 			if (player.isSneaking()) {
 				//totalHeight = 1.65;
 				//bodyHeight = 1.20;
 				//headHeight = 0.45;
-				if (arrow.posY >= player.posY + 1.20) return true;
+				if (arrow.getPosY() >= player.getPosY() + 1.20) return true;
 			} else {
 				//totalHeight = 1.80;
 				//bodyHeight = 1.35;
 				//headHeight = 0.45;
-				if (arrow.posY >= player.posY + 1.35) return true;
+				if (arrow.getPosY() >= player.getPosY() + 1.35) return true;
 			}
 		} else {
 			// TODO: mobs

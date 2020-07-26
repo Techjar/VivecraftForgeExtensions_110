@@ -1,5 +1,7 @@
 package com.techjar.vivecraftforge.util;
 
+import net.minecraft.util.math.vector.Vector3d;
+
 public class VRPlayerData {
 	public ObjectInfo head = new ObjectInfo();
 	public ObjectInfo controller0 = new ObjectInfo();
@@ -9,6 +11,12 @@ public class VRPlayerData {
 	public boolean seated;
 	public boolean freeMove;
 	public float bowDraw;
+	public float height;
+	public int activeHand;
+
+	public ObjectInfo getController(int c) {
+		return c == 0 ? controller0 : controller1;
+	}
 
 	public static class ObjectInfo {
 		public float posX;
@@ -18,5 +26,26 @@ public class VRPlayerData {
 		public float rotX;
 		public float rotY;
 		public float rotZ;
+
+		public Vector3d getPos() {
+			return new Vector3d(posX, posY, posZ);
+		}
+
+		public void setPos(Vector3d pos) {
+			posX = (float)pos.getX();
+			posY = (float)pos.getY();
+			posZ = (float)pos.getZ();
+		}
+
+		public Quaternion getRot() {
+			return new Quaternion(rotW, rotX, rotY, rotZ);
+		}
+
+		public void setRot(Quaternion quat) {
+			rotW = quat.w;
+			rotX = quat.x;
+			rotY = quat.y;
+			rotZ = quat.z;
+		}
 	}
 }

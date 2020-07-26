@@ -1,12 +1,11 @@
 package com.techjar.vivecraftforge.network.packet;
 
 import com.techjar.vivecraftforge.network.IPacket;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class PacketUberPacket implements IPacket {
 	public UUID uuid;
@@ -25,30 +24,30 @@ public class PacketUberPacket implements IPacket {
 	}
 
 	@Override
-	public void encodePacket(ChannelHandlerContext context, ByteBuf buffer) {
+	public void encode(final PacketBuffer buffer) {
 		buffer.writeLong(uuid.getMostSignificantBits());
 		buffer.writeLong(uuid.getLeastSignificantBits());
-		headData.encodePacket(context, buffer);
-		controller0Data.encodePacket(context, buffer);
-		controller1Data.encodePacket(context, buffer);
+		headData.encode(buffer);
+		controller0Data.encode(buffer);
+		controller1Data.encode(buffer);
 	}
 
 	@Override
-	public void decodePacket(ChannelHandlerContext context, ByteBuf buffer) {
+	public void decode(final PacketBuffer buffer) {
 		uuid = new UUID(buffer.readLong(), buffer.readLong());
 		headData = new PacketHeadData();
-		headData.decodePacket(context, buffer);
+		headData.decode(buffer);
 		controller0Data = new PacketController0Data();
-		controller0Data.decodePacket(context, buffer);
+		controller0Data.decode(buffer);
 		controller1Data = new PacketController1Data();
-		controller1Data.decodePacket(context, buffer);
+		controller1Data.decode(buffer);
 	}
 
 	@Override
-	public void handleClient(final EntityPlayerSP player) {
+	public void handleClient(final Supplier<NetworkEvent.Context> context) {
 	}
 
 	@Override
-	public void handleServer(final EntityPlayerMP player) {
+	public void handleServer(final Supplier<NetworkEvent.Context> context) {
 	}
 }
