@@ -1,6 +1,7 @@
 package com.techjar.vivecraftforge.util;
 
 import net.minecraft.entity.ai.goal.CreeperSwellGoal;
+import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.network.play.ServerPlayNetHandler;
 
 import java.lang.reflect.Constructor;
@@ -10,7 +11,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class ReflectionHelper {
-	// stuff goes here if ever needed
+	public static ReflectionField GoalSelector_goals = new ReflectionField(GoalSelector.class, "field_220892_d", "d", "goals");
 
 	public static Class reflectClass(String name) {
 		try {

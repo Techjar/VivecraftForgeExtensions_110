@@ -37,6 +37,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -149,7 +150,7 @@ public class EventHandlerServer {
 			}
 		} else if (event.getEntity() instanceof CreeperEntity) {
 			CreeperEntity creeper = (CreeperEntity)event.getEntity();
-			PrioritizedGoal goal = creeper.goalSelector.getRunningGoals().filter((g) -> g.getGoal() instanceof CreeperSwellGoal).findFirst().orElse(null);
+			PrioritizedGoal goal = ((Set<PrioritizedGoal>)ReflectionHelper.GoalSelector_goals.get(creeper.goalSelector)).stream().filter((g) -> g.getGoal() instanceof CreeperSwellGoal).findFirst().orElse(null);
 			if (goal != null) {
 				creeper.goalSelector.removeGoal(goal.getGoal());
 				creeper.goalSelector.addGoal(goal.getPriority(), new VRCreeperSwellGoal(creeper));
@@ -159,7 +160,7 @@ public class EventHandlerServer {
 			}
 		} else if (event.getEntity() instanceof EndermanEntity) {
 			EndermanEntity enderman = (EndermanEntity)event.getEntity();
-			PrioritizedGoal goal = enderman.goalSelector.getRunningGoals().filter((g) -> g.getGoal() instanceof EndermanEntity.StareGoal).findFirst().orElse(null);
+			PrioritizedGoal goal = ((Set<PrioritizedGoal>)ReflectionHelper.GoalSelector_goals.get(enderman.goalSelector)).stream().filter((g) -> g.getGoal() instanceof EndermanEntity.StareGoal).findFirst().orElse(null);
 			if (goal != null) {
 				enderman.goalSelector.removeGoal(goal.getGoal());
 				enderman.goalSelector.addGoal(goal.getPriority(), new VREndermanStareGoal(enderman));
