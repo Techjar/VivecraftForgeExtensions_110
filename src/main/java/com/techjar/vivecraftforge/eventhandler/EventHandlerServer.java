@@ -122,11 +122,11 @@ public class EventHandlerServer {
 				VRPlayerData data = PlayerTracker.getPlayerData(attacker);
 				boolean headshot = Util.isHeadshot(target, arrow);
 				if (data.seated) {
-					if (headshot) event.setAmount(event.getAmount() * Config.bowSeatedHeadshotMul.get());
-					else event.setAmount(event.getAmount() * Config.bowSeatedMul.get());
+					if (headshot) event.setAmount(event.getAmount() * Config.bowSeatedHeadshotMul.get().floatValue());
+					else event.setAmount(event.getAmount() * Config.bowSeatedMul.get().floatValue());
 				} else {
-					if (headshot) event.setAmount(event.getAmount() * Config.bowStandingHeadshotMul.get());
-					else event.setAmount(event.getAmount() * Config.bowStandingMul.get());
+					if (headshot) event.setAmount(event.getAmount() * Config.bowStandingHeadshotMul.get().floatValue());
+					else event.setAmount(event.getAmount() * Config.bowStandingMul.get().floatValue());
 				}
 			}
 		}

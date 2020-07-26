@@ -25,10 +25,10 @@ public class Config {
 	public static ForgeConfigSpec.BooleanValue vrVsNonVR;
 	public static ForgeConfigSpec.BooleanValue seatedVrVsSeatedVR;
 	public static ForgeConfigSpec.BooleanValue seatedVrVsNonVR;
-	public static ForgeConfigSpec.ConfigValue<Float> bowStandingMul;
-	public static ForgeConfigSpec.ConfigValue<Float> bowSeatedMul;
-	public static ForgeConfigSpec.ConfigValue<Float> bowStandingHeadshotMul;
-	public static ForgeConfigSpec.ConfigValue<Float> bowSeatedHeadshotMul;
+	public static ForgeConfigSpec.DoubleValue bowStandingMul;
+	public static ForgeConfigSpec.DoubleValue bowSeatedMul;
+	public static ForgeConfigSpec.DoubleValue bowStandingHeadshotMul;
+	public static ForgeConfigSpec.DoubleValue bowSeatedHeadshotMul;
 	public static ForgeConfigSpec.BooleanValue climbeyEnabled;
 	public static ForgeConfigSpec.EnumValue<BlockListMode> blockListMode;
 	public static ForgeConfigSpec.ConfigValue<List<? extends String>> blockList;
@@ -60,10 +60,10 @@ public class Config {
 		builder.comment("Vanilla modifications for VR players").push("vrchanges");
 		creeperSwellDistance = builder.comment("Distance at which creepers swell and explode for VR players. Vanilla: 3").defineInRange("creeperswelldistance", 1.75, 1, 3);
 		builder.comment("Bow damage adjustments").push("bow");
-		bowStandingMul = builder.comment("Archery damage multiplier for standing VR players.").defineInRange("standingmultiplier", 2.0f, 1.0f, 3.0f, Float.class);
-		bowSeatedMul = builder.comment("Archery damage multiplier for seated VR players.").defineInRange("seatedmultiplier", 1.0f, 1.0f, 3.0f, Float.class);
-		bowStandingHeadshotMul = builder.comment("Archery headshot damage multiplier for standing VR players.").defineInRange("standingheadshotmultiplier", 3.0f, 1.0f, 3.0f, Float.class);
-		bowSeatedHeadshotMul = builder.comment("Archery headshot damage multiplier for seated VR players.").defineInRange("seatedheadshotmultiplier", 2.0f, 1.0f, 3.0f, Float.class);
+		bowStandingMul = builder.comment("Archery damage multiplier for standing VR players.").defineInRange("standingmultiplier", 2.0, 1.0, 3.0);
+		bowSeatedMul = builder.comment("Archery damage multiplier for seated VR players.").defineInRange("seatedmultiplier", 1.0, 1.0, 3.0);
+		bowStandingHeadshotMul = builder.comment("Archery headshot damage multiplier for standing VR players.").defineInRange("standingheadshotmultiplier", 3.0, 1.0, 3.0);
+		bowSeatedHeadshotMul = builder.comment("Archery headshot damage multiplier for seated VR players.").defineInRange("seatedheadshotmultiplier", 2.0, 1.0, 3.0);
 		builder.pop(); // bow
 		builder.pop(); // vrchanges
 
