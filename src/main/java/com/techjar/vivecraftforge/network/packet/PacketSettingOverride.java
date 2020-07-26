@@ -29,7 +29,7 @@ public class PacketSettingOverride implements IPacket {
 	@Override
 	public void decode(final PacketBuffer buffer) {
 		while (buffer.readableBytes() > 0) {
-			settings.put(buffer.readString(), buffer.readString());
+			settings.put(buffer.readString(32767), buffer.readString(32767));
 		}
 	}
 

@@ -1,5 +1,6 @@
 package com.techjar.vivecraftforge.network.packet;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.function.Supplier;
 
@@ -38,7 +39,9 @@ public class PacketVersion implements IPacket {
 
 	@Override
 	public void decode(final PacketBuffer buffer) {
-		message = buffer.readString(32767); // idk why the hell the overloaded one is client-only
+		byte[] bytes = new byte[buffer.readableBytes()];
+		buffer.readBytes(bytes);
+		message = new String(bytes, StandardCharsets.UTF_8);
 	}
 
 	@Override
