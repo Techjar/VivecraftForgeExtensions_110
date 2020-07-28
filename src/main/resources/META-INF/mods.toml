@@ -3,7 +3,7 @@ loaderVersion="[32,)"
 
 [[mods]]
     modId="vivecraftforgeextensions"
-    version="1.0.0"
+    version="1.0.1"
     displayName="Vivecraft Forge Extensions"
     displayURL="https://www.curseforge.com/minecraft/mc-mods/vivecraft-forge-extensions"
     logoFile="logo.png"

@@ -135,15 +135,19 @@ public class EventHandlerServer {
 		if (event.getEntity() instanceof ServerPlayerEntity) {
 			final ServerPlayerEntity player = (ServerPlayerEntity)event.getEntity();
 			if (Config.vrOnly.get()) {
-				player.sendMessage(new StringTextComponent(Config.vrOnlyKickMessage.get()), net.minecraft.util.Util.DUMMY_UUID);
-				player.sendMessage(new StringTextComponent("You will be kicked in " + Config.vrOnlyKickDelay.get() + " seconds."), net.minecraft.util.Util.DUMMY_UUID);
 				Util.scheduler.schedule(() -> {
 					ServerLifecycleHooks.getCurrentServer().deferTask(() -> {
-						if (player.connection.getNetworkManager().isChannelOpen()) {
-							player.connection.disconnect(new StringTextComponent(Config.vrOnlyKickMessage.get()));
+						if (player.connection.getNetworkManager().isChannelOpen() && !PlayerTracker.hasPlayerData(player)) {
+							Util.scheduler.schedule(() -> {
+								player.sendMessage(new StringTextComponent(Config.vrOnlyKickMessage.get()), net.minecraft.util.Util.DUMMY_UUID);
+								player.sendMessage(new StringTextComponent("If this is not a VR client, you will be kicked in " + Config.vrOnlyKickDelay.get() + " seconds."), net.minecraft.util.Util.DUMMY_UUID);
+								if (player.connection.getNetworkManager().isChannelOpen() && !PlayerTracker.hasPlayerData(player)) {
+									player.connection.disconnect(new StringTextComponent(Config.vrOnlyKickMessage.get()));
+								}
+							}, Math.round(Config.vrOnlyKickDelay.get() * 1000), TimeUnit.MILLISECONDS);
 						}
 					});
-				}, Math.round(Config.vrOnlyKickDelay.get() * 1000), TimeUnit.MILLISECONDS);
+				}, 1000, TimeUnit.MILLISECONDS);
 			}
 		} else if (event.getEntity() instanceof ProjectileEntity) {
 			ProjectileEntity projectile = (ProjectileEntity)event.getEntity();

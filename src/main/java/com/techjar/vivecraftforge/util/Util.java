@@ -19,7 +19,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Supplier;
 
 public class Util {
-	public static ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+	public static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 	static {
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override

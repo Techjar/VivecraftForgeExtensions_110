@@ -46,7 +46,7 @@ public class Config {
 
 		builder.comment("General settings").push("general");
 		vrOnly = builder.comment("Enable to allow only VR players to play.").define("vronly", false);
-		vrOnlyKickDelay = builder.comment("How many seconds to wait before kicking non-VR players.").defineInRange("vronlykickdelay", 5.0, 5.0, Double.MAX_VALUE);
+		vrOnlyKickDelay = builder.comment("How many seconds to wait before kicking non-VR players.").defineInRange("vronlykickdelay", 5.0, 1.0, Double.MAX_VALUE);
 		printMoney = builder.comment("Don't get caught using this!").define("printmoney", false);
 		builder.pop(); // general
 
