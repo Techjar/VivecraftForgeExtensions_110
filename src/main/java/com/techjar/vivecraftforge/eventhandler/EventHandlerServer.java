@@ -134,7 +134,7 @@ public class EventHandlerServer {
 	public void onEntityJoinWorld(EntityJoinWorldEvent event) {
 		if (event.getEntity() instanceof ServerPlayerEntity) {
 			final ServerPlayerEntity player = (ServerPlayerEntity)event.getEntity();
-			if (Config.vrOnly.get()) {
+			if (Config.vrOnly.get() && !player.hasPermissionLevel(2)) {
 				Util.scheduler.schedule(() -> {
 					ServerLifecycleHooks.getCurrentServer().deferTask(() -> {
 						if (player.connection.getNetworkManager().isChannelOpen() && !PlayerTracker.hasPlayerData(player)) {
