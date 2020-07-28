@@ -2,8 +2,8 @@ package com.techjar.vivecraftforge;
 
 import com.techjar.vivecraftforge.eventhandler.EventHandlerServer;
 import com.techjar.vivecraftforge.network.ChannelHandler;
-import com.techjar.vivecraftforge.util.Util;
 import com.techjar.vivecraftforge.util.LogHelper;
+import com.techjar.vivecraftforge.util.Util;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -27,7 +27,8 @@ public class VivecraftForge {
 		MOD_INFO = ModLoadingContext.get().getActiveContainer().getModInfo();
 		ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (a, b) -> true));
 		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-		DistExecutor.safeRunWhenOn(Dist.DEDICATED_SERVER, () -> () -> serverInit(eventBus));
+		// I dunno how to make "safe" not crash, it doesn't make any sense and gives unhelpful errors
+		DistExecutor.unsafeRunWhenOn(Dist.DEDICATED_SERVER, () -> () -> serverInit(eventBus));
 	}
 
 	private void serverInit(IEventBus eventBus) {

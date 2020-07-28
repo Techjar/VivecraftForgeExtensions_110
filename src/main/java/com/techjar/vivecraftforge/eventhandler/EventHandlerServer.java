@@ -1,20 +1,17 @@
 package com.techjar.vivecraftforge.eventhandler;
 
 import com.techjar.vivecraftforge.Config;
-import com.techjar.vivecraftforge.VivecraftForge;
 import com.techjar.vivecraftforge.entity.ai.goal.VRCreeperSwellGoal;
+import com.techjar.vivecraftforge.entity.ai.goal.VREndermanFindPlayerGoal;
 import com.techjar.vivecraftforge.entity.ai.goal.VREndermanStareGoal;
 import com.techjar.vivecraftforge.network.ChannelHandler;
 import com.techjar.vivecraftforge.network.packet.PacketUberPacket;
 import com.techjar.vivecraftforge.util.LogHelper;
 import com.techjar.vivecraftforge.util.PlayerTracker;
-import com.techjar.vivecraftforge.util.ReflectionHelper;
 import com.techjar.vivecraftforge.util.Util;
 import com.techjar.vivecraftforge.util.VRPlayerData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.CreeperSwellGoal;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -37,7 +34,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -108,6 +104,7 @@ public class EventHandlerServer {
 		PlayerEntity player = event.getPlayer();
 		VRPlayerData data = PlayerTracker.getPlayerData(player);
 		if (data != null && !data.seated && data.bowDraw > 0) {
+			LogHelper.debug("Bow draw: " + data.bowDraw);
 			event.setCharge(Math.round(data.bowDraw * 20));
 		}
 	}
@@ -148,26 +145,6 @@ public class EventHandlerServer {
 					});
 				}, Math.round(Config.vrOnlyKickDelay.get() * 1000), TimeUnit.MILLISECONDS);
 			}
-		} else if (event.getEntity() instanceof CreeperEntity) {
-			CreeperEntity creeper = (CreeperEntity)event.getEntity();
-			PrioritizedGoal goal = ((Set<PrioritizedGoal>)ReflectionHelper.GoalSelector_goals.get(creeper.goalSelector)).stream().filter((g) -> g.getGoal() instanceof CreeperSwellGoal).findFirst().orElse(null);
-			if (goal != null) {
-				creeper.goalSelector.removeGoal(goal.getGoal());
-				creeper.goalSelector.addGoal(goal.getPriority(), new VRCreeperSwellGoal(creeper));
-				LogHelper.debug("Replaced CreeperSwellGoal in %s", creeper);
-			} else {
-				LogHelper.warning("Couldn't find CreeperSwellGoal in %s", creeper);
-			}
-		} else if (event.getEntity() instanceof EndermanEntity) {
-			EndermanEntity enderman = (EndermanEntity)event.getEntity();
-			PrioritizedGoal goal = ((Set<PrioritizedGoal>)ReflectionHelper.GoalSelector_goals.get(enderman.goalSelector)).stream().filter((g) -> g.getGoal() instanceof EndermanEntity.StareGoal).findFirst().orElse(null);
-			if (goal != null) {
-				enderman.goalSelector.removeGoal(goal.getGoal());
-				enderman.goalSelector.addGoal(goal.getPriority(), new VREndermanStareGoal(enderman));
-				LogHelper.debug("Replaced EndermanEntity.StareGoal in %s", enderman);
-			} else {
-				LogHelper.warning("Couldn't find EndermanEntity.StareGoal in %s", enderman);
-			}
 		} else if (event.getEntity() instanceof ProjectileEntity) {
 			ProjectileEntity projectile = (ProjectileEntity)event.getEntity();
 			if (!(projectile.func_234616_v_() instanceof PlayerEntity))
@@ -188,8 +165,20 @@ public class EventHandlerServer {
 
 			pos = pos.add(aim.mul(0.6, 0.6, 0.6));
 			double vel = projectile.getMotion().length();
-			projectile.setMotion(aim.mul(vel, vel, vel));
 			projectile.setPosition(pos.x, pos.y, pos.z);
+			projectile.shoot(aim.x, aim.y, aim.z, (float)vel, 0.0f);
+
+			Vector3d shooterMotion = shooter.getMotion();
+			projectile.setMotion(projectile.getMotion().add(shooterMotion.x, shooter.isOnGround() ? 0.0 : shooterMotion.y, shooterMotion.z));
+			LogHelper.debug("Projectile direction: {}", aim);
+			LogHelper.debug("Projectile velocity: {}", vel);
+		} else if (event.getEntity() instanceof CreeperEntity) {
+			CreeperEntity creeper = (CreeperEntity)event.getEntity();
+			Util.replaceAIGoal(creeper, creeper.goalSelector, CreeperSwellGoal.class, () -> new VRCreeperSwellGoal(creeper));
+		} else if (event.getEntity() instanceof EndermanEntity) {
+			EndermanEntity enderman = (EndermanEntity) event.getEntity();
+			Util.replaceAIGoal(enderman, enderman.goalSelector, EndermanEntity.StareGoal.class, () -> new VREndermanStareGoal(enderman));
+			Util.replaceAIGoal(enderman, enderman.targetSelector, EndermanEntity.FindPlayerGoal.class, () -> new VREndermanFindPlayerGoal(enderman));
 		}
 	}
 }

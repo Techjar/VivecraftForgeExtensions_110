@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class ReflectionHelper {
-	public static ReflectionField GoalSelector_goals = new ReflectionField(GoalSelector.class, "field_220892_d", "d", "goals");
+	//public static ReflectionField GoalSelector_goals = new ReflectionField(GoalSelector.class, "field_220892_d", "d", "goals");
 
 	public static Class reflectClass(String name) {
 		try {

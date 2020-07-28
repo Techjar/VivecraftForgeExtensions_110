@@ -12,15 +12,19 @@ public class PacketUberPacket implements IPacket {
 	public PacketHeadData headData;
 	public PacketController0Data controller0Data;
 	public PacketController1Data controller1Data;
+	public float worldScale;
+	public float height;
 
 	public PacketUberPacket() {
 	}
 
-	public PacketUberPacket(UUID uuid, PacketHeadData headData, PacketController0Data controller0Data, PacketController1Data controller1Data) {
+	public PacketUberPacket(UUID uuid, PacketHeadData headData, PacketController0Data controller0Data, PacketController1Data controller1Data, float worldScale, float height) {
 		this.uuid = uuid;
 		this.headData = headData;
 		this.controller0Data = controller0Data;
 		this.controller1Data = controller1Data;
+		this.worldScale = worldScale;
+		this.height = height;
 	}
 
 	@Override
@@ -30,6 +34,8 @@ public class PacketUberPacket implements IPacket {
 		headData.encode(buffer);
 		controller0Data.encode(buffer);
 		controller1Data.encode(buffer);
+		buffer.writeFloat(worldScale);
+		buffer.writeFloat(height);
 	}
 
 	@Override
@@ -41,6 +47,8 @@ public class PacketUberPacket implements IPacket {
 		controller0Data.decode(buffer);
 		controller1Data = new PacketController1Data();
 		controller1Data.decode(buffer);
+		worldScale = buffer.readFloat();
+		height = buffer.readFloat();
 	}
 
 	@Override

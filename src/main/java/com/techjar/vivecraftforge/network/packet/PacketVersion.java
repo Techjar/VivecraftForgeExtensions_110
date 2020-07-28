@@ -53,7 +53,7 @@ public class PacketVersion implements IPacket {
 		ServerPlayerEntity player = context.get().getSender();
 		ChannelHandler.sendTo(new PacketVersion(VivecraftForge.MOD_INFO.getDisplayName() + " " + VivecraftForge.MOD_INFO.getVersion()), player);
 		if (!message.contains("NONVR")) {
-			LogHelper.info("VR player joined: %s", message);
+			LogHelper.info("VR player joined: {}", message);
 			ChannelHandler.sendTo(new PacketRequestData(), player);
 			ChannelHandler.sendTo(new PacketTeleport(), player);
 
@@ -82,7 +82,7 @@ public class PacketVersion implements IPacket {
 					player.getServer().getPlayerList().func_232641_a_(new StringTextComponent(String.format(Config.joinMessageVR.get(), player.getDisplayName())), ChatType.SYSTEM, net.minecraft.util.Util.DUMMY_UUID);
 			});
 		} else {
-			LogHelper.info("Non-VR player joined: %s", message);
+			LogHelper.info("Non-VR player joined: {}", message);
 			context.get().enqueueWork(() -> {
 				PlayerTracker.nonvrPlayers.add(player.getGameProfile().getId());
 				if (Config.enableJoinMessages.get() && !Config.joinMessageNonVR.get().isEmpty())
