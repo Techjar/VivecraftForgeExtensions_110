@@ -54,7 +54,7 @@ public class Config {
 		vrOnlyKickMessage = builder.comment("Kick message displayed to non-VR players, if vronly is enabled.").define("vronlykickmessage", "This server only allows VR players.");
 		enableJoinMessages = builder.comment("Enable or disable all join messages.").define("enablejoinmessages", false);
 		joinMessageVR = builder.comment("Message displayed when a player joins using VR. Leave blank to disable.").define("joinmessagevr", "\u00A79%s has joined using \u00A76VR\u00A79!");
-		joinMessageNonVR = builder.comment("Message displayed when a player joins using the non-VR companion. Leave blank to disable.").define("joinmessagecompanion", "\u00A7a%s has joined using non-VR companion!");
+		joinMessageNonVR = builder.comment("Message displayed when a player joins using the non-VR companion. Leave blank to disable.").define("joinmessagenonvr", "\u00A7a%s has joined using non-VR!");
 		builder.pop(); // messages
 
 		builder.comment("Vanilla modifications for VR players").push("vrchanges");
