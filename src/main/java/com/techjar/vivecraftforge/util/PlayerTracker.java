@@ -53,27 +53,27 @@ public class PlayerTracker {
 
 	public static VRPlayerData getPlayerDataAbsolute(PlayerEntity entity) {
 		VRPlayerData data = getPlayerData(entity);
-		if (data != null) {
-			VRPlayerData realData = data;
-			data = new VRPlayerData();
+		if (data == null)
+			return null;
 
-			data.handsReversed = realData.handsReversed;
-			data.worldScale = realData.worldScale;
-			data.seated = realData.seated;
-			data.freeMove = realData.freeMove;
-			data.bowDraw = realData.bowDraw;
-			data.height = realData.height;
-			data.activeHand = realData.activeHand;
+		VRPlayerData absData = new VRPlayerData();
 
-			data.head.setPos(realData.head.getPos().add(entity.getPositionVec()));
-			data.head.setRot(realData.head.getRot());
-			data.controller0.setPos(realData.controller0.getPos().add(entity.getPositionVec()));
-			data.controller0.setRot(realData.controller0.getRot());
-			data.controller1.setPos(realData.controller1.getPos().add(entity.getPositionVec()));
-			data.controller1.setRot(realData.controller1.getRot());
-		}
+		absData.handsReversed = data.handsReversed;
+		absData.worldScale = data.worldScale;
+		absData.seated = data.seated;
+		absData.freeMove = data.freeMove;
+		absData.bowDraw = data.bowDraw;
+		absData.height = data.height;
+		absData.activeHand = data.activeHand;
 
-		return data;
+		absData.head.setPos(data.head.getPos().add(entity.getPositionVec()));
+		absData.head.setRot(data.head.getRot());
+		absData.controller0.setPos(data.controller0.getPos().add(entity.getPositionVec()));
+		absData.controller0.setRot(data.controller0.getRot());
+		absData.controller1.setPos(data.controller1.getPos().add(entity.getPositionVec()));
+		absData.controller1.setRot(data.controller1.getRot());
+
+		return absData;
 	}
 
 	public static boolean hasPlayerData(PlayerEntity entity) {
