@@ -12,6 +12,7 @@ import com.techjar.vivecraftforge.util.Util;
 import com.techjar.vivecraftforge.util.VRPlayerData;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.CreeperSwellGoal;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,6 +28,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -167,22 +169,42 @@ public class EventHandlerServer {
 				aim = data.getController(1).getPos().subtract(pos).normalize();
 			}
 
-			pos = pos.add(aim.mul(0.6, 0.6, 0.6));
+			pos = pos.add(aim.scale(0.6));
 			double vel = projectile.getMotion().length();
 			projectile.setPosition(pos.x, pos.y, pos.z);
 			projectile.shoot(aim.x, aim.y, aim.z, (float)vel, 0.0f);
 
 			Vector3d shooterMotion = shooter.getMotion();
 			projectile.setMotion(projectile.getMotion().add(shooterMotion.x, shooter.isOnGround() ? 0.0 : shooterMotion.y, shooterMotion.z));
+
 			LogHelper.debug("Projectile direction: {}", aim);
 			LogHelper.debug("Projectile velocity: {}", vel);
 		} else if (event.getEntity() instanceof CreeperEntity) {
 			CreeperEntity creeper = (CreeperEntity)event.getEntity();
 			Util.replaceAIGoal(creeper, creeper.goalSelector, CreeperSwellGoal.class, () -> new VRCreeperSwellGoal(creeper));
 		} else if (event.getEntity() instanceof EndermanEntity) {
-			EndermanEntity enderman = (EndermanEntity) event.getEntity();
+			EndermanEntity enderman = (EndermanEntity)event.getEntity();
 			Util.replaceAIGoal(enderman, enderman.goalSelector, EndermanEntity.StareGoal.class, () -> new VREndermanStareGoal(enderman));
 			Util.replaceAIGoal(enderman, enderman.targetSelector, EndermanEntity.FindPlayerGoal.class, () -> new VREndermanFindPlayerGoal(enderman));
 		}
+	}
+
+	@SubscribeEvent
+	public void onItemToss(ItemTossEvent event) {
+		if (!PlayerTracker.hasPlayerData(event.getPlayer()))
+			return;
+
+		VRPlayerData data = PlayerTracker.getPlayerDataAbsolute(event.getPlayer());
+		ItemEntity item = event.getEntityItem();
+
+		Vector3d pos = data.getController(0).getPos();
+		Vector3d aim = data.getController(0).getRot().multiply(new Vector3d(0, 0, -1));
+		Vector3d aimUp = data.getController(0).getRot().multiply(new Vector3d(0, 1, 0));
+		double pitch = Math.toDegrees(Math.atan(Math.sqrt(aim.x * aim.x + aim.y * aim.y) / aim.z));
+
+		pos = pos.add(aim.scale(0.2)).subtract(aimUp.scale(0.4 * (1 - Math.abs(pitch) / 90)));
+		double vel = 0.3;
+		item.setPosition(pos.x, pos.y, pos.z);
+		item.setMotion(aim.scale(vel));
 	}
 }
