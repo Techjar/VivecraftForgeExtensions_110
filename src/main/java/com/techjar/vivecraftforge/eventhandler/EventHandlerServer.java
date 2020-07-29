@@ -6,6 +6,7 @@ import com.techjar.vivecraftforge.entity.ai.goal.VREndermanFindPlayerGoal;
 import com.techjar.vivecraftforge.entity.ai.goal.VREndermanStareGoal;
 import com.techjar.vivecraftforge.network.ChannelHandler;
 import com.techjar.vivecraftforge.network.packet.PacketUberPacket;
+import com.techjar.vivecraftforge.util.AimFixHandler;
 import com.techjar.vivecraftforge.util.LogHelper;
 import com.techjar.vivecraftforge.util.PlayerTracker;
 import com.techjar.vivecraftforge.util.Util;
@@ -21,6 +22,7 @@ import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.entity.projectile.TridentEntity;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.MathHelper;
@@ -32,6 +34,7 @@ import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
@@ -206,5 +209,11 @@ public class EventHandlerServer {
 		double vel = 0.3;
 		item.setPosition(pos.x, pos.y, pos.z);
 		item.setMotion(aim.scale(vel));
+	}
+
+	@SubscribeEvent
+	public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+		NetworkManager netManager = ((ServerPlayerEntity)event.getPlayer()).connection.getNetworkManager();
+		netManager.channel().pipeline().addBefore("packet_handler", "vfe_aim_fix", new AimFixHandler(netManager));
 	}
 }

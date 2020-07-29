@@ -15,10 +15,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerTracker {
-	public static Map<UUID, VRPlayerData> players = new HashMap<UUID, VRPlayerData>();
-	public static Set<UUID> nonvrPlayers = new HashSet<UUID>();
+	public static Map<UUID, VRPlayerData> players = new ConcurrentHashMap<>();
+	public static Set<UUID> nonvrPlayers = ConcurrentHashMap.newKeySet();
 
 	public static void tick() {
 		PlayerList playerList = ServerLifecycleHooks.getCurrentServer().getPlayerList();
