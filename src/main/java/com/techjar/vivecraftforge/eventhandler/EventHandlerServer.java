@@ -203,7 +203,7 @@ public class EventHandlerServer {
 		Vector3d pos = data.getController(0).getPos();
 		Vector3d aim = data.getController(0).getRot().multiply(new Vector3d(0, 0, -1));
 		Vector3d aimUp = data.getController(0).getRot().multiply(new Vector3d(0, 1, 0));
-		double pitch = Math.toDegrees(Math.atan(Math.sqrt(aim.x * aim.x + aim.y * aim.y) / aim.z));
+		double pitch = Math.toDegrees(Math.asin(-aim.y));
 
 		pos = pos.add(aim.scale(0.2)).subtract(aimUp.scale(0.4 * (1 - Math.abs(pitch) / 90)));
 		double vel = 0.3;

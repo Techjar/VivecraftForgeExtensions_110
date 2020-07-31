@@ -19,9 +19,9 @@ public class VRPlayerData {
 	}
 
 	public static class ObjectInfo {
-		public float posX;
-		public float posY;
-		public float posZ;
+		public double posX;
+		public double posY;
+		public double posZ;
 		public float rotW;
 		public float rotX;
 		public float rotY;
@@ -32,9 +32,9 @@ public class VRPlayerData {
 		}
 
 		public void setPos(Vector3d pos) {
-			posX = (float)pos.getX();
-			posY = (float)pos.getY();
-			posZ = (float)pos.getZ();
+			posX = pos.getX();
+			posY = pos.getY();
+			posZ = pos.getZ();
 		}
 
 		public Quaternion getRot() {
