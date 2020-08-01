@@ -33,7 +33,7 @@ public class AimFixHandler extends ChannelInboundHandlerAdapter {
 		}
 
 		LogHelper.debug("Captured message {}", msg.getClass().getSimpleName());
-		player.getServer().deferTask(() -> {
+		player.getServer().runAsync(() -> {
 			// Save all the current orientation data
 			Vector3d oldPos = player.getPositionVec();
 			Vector3d oldPrevPos = new Vector3d(player.prevPosX, player.prevPosY, player.prevPosZ);
