@@ -17,7 +17,7 @@
     "count": 1,
     "nbt": {
       "display": {
-        "Name": "{\"text\":\"Jump Boots\"}"
+        "Name": "{\"translate\":\"vivecraft.item.jumpboots\"}"
       },
       "Unbreakable": true,
       "HideFlags": 4
