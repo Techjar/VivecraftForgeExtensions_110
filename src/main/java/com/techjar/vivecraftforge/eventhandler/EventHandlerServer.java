@@ -144,7 +144,7 @@ public class EventHandlerServer {
 					ServerLifecycleHooks.getCurrentServer().runAsync(() -> {
 						if (player.connection.getNetworkManager().isChannelOpen() && !PlayerTracker.hasPlayerData(player)) {
 							player.sendMessage(new StringTextComponent(Config.vrOnlyKickMessage.get()), net.minecraft.util.Util.DUMMY_UUID);
-							player.sendMessage(new StringTextComponent("If this is not a VR client, you will be kicked in " + Config.vrOnlyKickDelay.get() + " seconds."), net.minecraft.util.Util.DUMMY_UUID)
+							player.sendMessage(new StringTextComponent("If this is not a VR client, you will be kicked in " + Config.vrOnlyKickDelay.get() + " seconds."), net.minecraft.util.Util.DUMMY_UUID);
 							Util.scheduler.schedule(() -> {
 								ServerLifecycleHooks.getCurrentServer().runAsync(() -> {
 									if (player.connection.getNetworkManager().isChannelOpen() && !PlayerTracker.hasPlayerData(player)) {
