@@ -55,8 +55,9 @@ public class PacketVersion implements IPacket {
 		if (!message.contains("NONVR")) {
 			LogHelper.info("VR player joined: {}", message);
 			ChannelHandler.sendTo(new PacketRequestData(), player);
-			ChannelHandler.sendTo(new PacketTeleport(), player);
 
+			if (Config.teleportEnabled.get())
+				ChannelHandler.sendTo(new PacketTeleport(), player);
 			if (Config.climbeyEnabled.get())
 				ChannelHandler.sendTo(new PacketClimbing(Config.blockListMode.get(), Config.blockList.get()), player);
 
