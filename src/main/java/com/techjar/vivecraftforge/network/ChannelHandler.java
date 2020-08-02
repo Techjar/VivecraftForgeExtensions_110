@@ -32,6 +32,7 @@ public class ChannelHandler {
 		addDiscriminator(11, new Message<>(PacketSettingOverride.class));
 		addDiscriminator(12, new Message<>(PacketHeight.class));
 		addDiscriminator(13, new Message<>(PacketActiveHand.class));
+		addDiscriminator(14, new Message<>(PacketCrawl.class));
 
 		LogHelper.debug("Networking initialized");
 	}

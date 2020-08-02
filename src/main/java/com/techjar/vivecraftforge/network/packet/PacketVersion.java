@@ -60,6 +60,8 @@ public class PacketVersion implements IPacket {
 				ChannelHandler.sendTo(new PacketTeleport(), player);
 			if (Config.climbeyEnabled.get())
 				ChannelHandler.sendTo(new PacketClimbing(Config.blockListMode.get(), Config.blockList.get()), player);
+			if (Config.crawlingEnabled.get())
+				ChannelHandler.sendTo(new PacketCrawl(), player);
 
 			if (Config.teleportLimited.get()) {
 				HashMap<String, Object> map = new HashMap<>();

@@ -32,6 +32,7 @@ public class Config {
 	public static ForgeConfigSpec.BooleanValue climbeyEnabled;
 	public static ForgeConfigSpec.EnumValue<BlockListMode> blockListMode;
 	public static ForgeConfigSpec.ConfigValue<List<? extends String>> blockList;
+	public static ForgeConfigSpec.BooleanValue crawlingEnabled;
 	public static ForgeConfigSpec.BooleanValue teleportEnabled;
 	public static ForgeConfigSpec.BooleanValue teleportLimited;
 	public static ForgeConfigSpec.IntValue teleportLimitUp;
@@ -80,6 +81,10 @@ public class Config {
 		blockListMode = builder.comment("Mode for block list.").defineEnum("blocklistmode", BlockListMode.DISABLED);
 		blockList = builder.comment("List of blocks to whitelist or blacklist").defineList("blocklist", Arrays.asList("white_wool", "dirt", "grass_block"), (s) -> s instanceof String && GameRegistry.findRegistry(Block.class).containsKey(new ResourceLocation((String)s)));
 		builder.pop(); // climbey
+
+		builder.comment("Roomscale crawling settings").push("crawling");
+		crawlingEnabled = builder.comment("Whether clients will be allowed to use roomscale crawling. Does not disable vanilla forced-into-small-space crawling mechanic.").define("enabled", true);
+		builder.pop(); // crawling
 
 		builder.comment("Teleport settings").push("teleport");
 		teleportEnabled = builder.comment("Whether teleport is allowed. Recommended for players prone to VR sickness").define("enabled", true);

@@ -12,6 +12,7 @@ import com.techjar.vivecraftforge.util.PlayerTracker;
 import com.techjar.vivecraftforge.util.Util;
 import com.techjar.vivecraftforge.util.VRPlayerData;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.ai.goal.CreeperSwellGoal;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.CreeperEntity;
@@ -217,5 +218,14 @@ public class EventHandlerServer {
 	public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		NetworkManager netManager = ((ServerPlayerEntity)event.getPlayer()).connection.getNetworkManager();
 		netManager.channel().pipeline().addBefore("packet_handler", "vfe_aim_fix", new AimFixHandler(netManager));
+	}
+
+	@SubscribeEvent
+	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+		if (event.phase == TickEvent.Phase.END) {
+			VRPlayerData data = PlayerTracker.getPlayerData(event.player);
+			if (data != null && data.crawling)
+				event.player.setPose(Pose.SWIMMING);
+		}
 	}
 }

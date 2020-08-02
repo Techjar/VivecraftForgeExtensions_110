@@ -13,6 +13,7 @@ public class VRPlayerData {
 	public float bowDraw;
 	public float height;
 	public int activeHand;
+	public boolean crawling;
 
 	public ObjectInfo getController(int c) {
 		return c == 0 ? controller0 : controller1;
