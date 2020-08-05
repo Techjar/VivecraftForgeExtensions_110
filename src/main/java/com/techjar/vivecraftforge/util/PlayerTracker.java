@@ -66,6 +66,7 @@ public class PlayerTracker {
 		absData.bowDraw = data.bowDraw;
 		absData.height = data.height;
 		absData.activeHand = data.activeHand;
+		absData.crawling = data.crawling;
 
 		absData.head.setPos(data.head.getPos().add(entity.getPositionVec()).add(data.offset));
 		absData.head.setRot(data.head.getRot());
