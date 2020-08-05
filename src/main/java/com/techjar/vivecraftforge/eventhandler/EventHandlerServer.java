@@ -217,7 +217,7 @@ public class EventHandlerServer {
 	@SubscribeEvent
 	public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		NetworkManager netManager = ((ServerPlayerEntity)event.getPlayer()).connection.getNetworkManager();
-		netManager.channel().pipeline().addBefore("packet_handler", "vfe_aim_fix", new AimFixHandler(netManager));
+		netManager.channel().pipeline().addBefore("packet_handler", "vr_aim_fix", new AimFixHandler(netManager));
 	}
 
 	@SubscribeEvent
