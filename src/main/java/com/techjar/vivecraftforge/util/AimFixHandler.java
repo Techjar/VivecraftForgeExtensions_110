@@ -43,6 +43,7 @@ public class AimFixHandler extends ChannelInboundHandlerAdapter {
 			float oldPrevPitch = player.prevRotationPitch;
 			float oldPrevYaw = player.prevRotationYaw;
 			float oldPrevYawHead = player.prevRotationYawHead;
+			float oldEyeHeight = player.eyeHeight;
 
 			// Check again in case of race condition
 			if (PlayerTracker.hasPlayerData(player)) {
@@ -59,6 +60,7 @@ public class AimFixHandler extends ChannelInboundHandlerAdapter {
 				player.rotationYaw = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));
 				player.prevRotationPitch = player.rotationPitch;
 				player.prevRotationYaw = player.prevRotationYawHead = player.rotationYawHead = player.rotationYaw;
+				player.eyeHeight = 0;
 			}
 
 			// Call the packet handler directly
@@ -87,6 +89,7 @@ public class AimFixHandler extends ChannelInboundHandlerAdapter {
 			player.prevRotationPitch = oldPrevPitch;
 			player.prevRotationYaw = oldPrevYaw;
 			player.prevRotationYawHead = oldPrevYawHead;
+			player.eyeHeight = oldEyeHeight;
 		});
 	}
 }
