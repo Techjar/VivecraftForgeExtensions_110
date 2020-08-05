@@ -67,11 +67,11 @@ public class PlayerTracker {
 		absData.height = data.height;
 		absData.activeHand = data.activeHand;
 
-		absData.head.setPos(data.head.getPos().add(entity.getPositionVec()));
+		absData.head.setPos(data.head.getPos().add(entity.getPositionVec()).add(data.offset));
 		absData.head.setRot(data.head.getRot());
-		absData.controller0.setPos(data.controller0.getPos().add(entity.getPositionVec()));
+		absData.controller0.setPos(data.controller0.getPos().add(entity.getPositionVec()).add(data.offset));
 		absData.controller0.setRot(data.controller0.getRot());
-		absData.controller1.setPos(data.controller1.getPos().add(entity.getPositionVec()));
+		absData.controller1.setPos(data.controller1.getPos().add(entity.getPositionVec()).add(data.offset));
 		absData.controller1.setRot(data.controller1.getRot());
 
 		return absData;

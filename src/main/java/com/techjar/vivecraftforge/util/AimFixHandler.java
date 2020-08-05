@@ -25,6 +25,7 @@ public class AimFixHandler extends ChannelInboundHandlerAdapter {
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		ServerPlayerEntity player = ((ServerPlayNetHandler)netManager.getNetHandler()).player;
 		boolean isCapturedPacket = msg instanceof CPlayerTryUseItemPacket || msg instanceof CPlayerTryUseItemOnBlockPacket || msg instanceof CPlayerDiggingPacket;
+		boolean useActiveHand = !(msg instanceof CPlayerDiggingPacket) || ((CPlayerDiggingPacket)msg).getAction() == CPlayerDiggingPacket.Action.RELEASE_USE_ITEM;
 
 		if (!PlayerTracker.hasPlayerData(player) || !isCapturedPacket || player.getServer() == null) {
 			// we don't need to handle this packet, just defer to the next handler in the pipeline
@@ -45,11 +46,11 @@ public class AimFixHandler extends ChannelInboundHandlerAdapter {
 			float oldPrevYawHead = player.prevRotationYawHead;
 			float oldEyeHeight = player.eyeHeight;
 
-			// Check again in case of race condition
-			if (PlayerTracker.hasPlayerData(player)) {
-				VRPlayerData data = PlayerTracker.getPlayerDataAbsolute(player);
-				Vector3d pos = data.getController(0).getPos();
-				Vector3d aim = data.getController(0).getRot().multiply(new Vector3d(0, 0, -1));
+			VRPlayerData data = null;
+			if (PlayerTracker.hasPlayerData(player)) { // Check again in case of race condition
+				data = PlayerTracker.getPlayerDataAbsolute(player);
+				Vector3d pos = data.getController(useActiveHand ? data.activeHand : 0).getPos();
+				Vector3d aim = data.getController(useActiveHand ? data.activeHand : 0).getRot().multiply(new Vector3d(0, 0, -1));
 
 				// Inject our custom orientation data
 				player.setRawPosition(pos.x, pos.y, pos.z);
@@ -61,6 +62,9 @@ public class AimFixHandler extends ChannelInboundHandlerAdapter {
 				player.prevRotationPitch = player.rotationPitch;
 				player.prevRotationYaw = player.prevRotationYawHead = player.rotationYawHead = player.rotationYaw;
 				player.eyeHeight = 0;
+
+				// Set up offset to fix relative positions
+				data.offset = oldPos.subtract(pos);
 			}
 
 			// Call the packet handler directly
@@ -90,6 +94,10 @@ public class AimFixHandler extends ChannelInboundHandlerAdapter {
 			player.prevRotationYaw = oldPrevYaw;
 			player.prevRotationYawHead = oldPrevYawHead;
 			player.eyeHeight = oldEyeHeight;
+
+			// Reset offset
+			if (data != null)
+				data.offset = new Vector3d(0, 0, 0);
 		});
 	}
 }

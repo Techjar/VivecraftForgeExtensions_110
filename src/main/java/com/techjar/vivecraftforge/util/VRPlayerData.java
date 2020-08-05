@@ -3,6 +3,7 @@ package com.techjar.vivecraftforge.util;
 import net.minecraft.util.math.vector.Vector3d;
 
 public class VRPlayerData {
+	public Vector3d offset = new Vector3d(0, 0, 0);
 	public ObjectInfo head = new ObjectInfo();
 	public ObjectInfo controller0 = new ObjectInfo();
 	public ObjectInfo controller1 = new ObjectInfo();
