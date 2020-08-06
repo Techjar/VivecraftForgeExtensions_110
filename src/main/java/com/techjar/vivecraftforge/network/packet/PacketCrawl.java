@@ -38,9 +38,9 @@ public class PacketCrawl implements IPacket {
 	public void handleServer(Supplier<NetworkEvent.Context> context) {
 		if (Config.crawlingEnabled.get()) {
 			ServerPlayerEntity player = context.get().getSender();
-			if (!PlayerTracker.hasPlayerData(player))
-				return;
 			context.get().enqueueWork(() -> {
+				if (!PlayerTracker.hasPlayerData(player))
+					return;
 				VRPlayerData data = PlayerTracker.getPlayerData(player, true);
 				data.crawling = crawling;
 				if (data.crawling)

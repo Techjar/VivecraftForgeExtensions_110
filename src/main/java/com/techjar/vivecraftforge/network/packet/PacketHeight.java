@@ -36,9 +36,9 @@ public class PacketHeight implements IPacket {
 	@Override
 	public void handleServer(final Supplier<NetworkEvent.Context> context) {
 		ServerPlayerEntity player = context.get().getSender();
-		if (!PlayerTracker.hasPlayerData(player))
-			return;
 		context.get().enqueueWork(() -> {
+			if (!PlayerTracker.hasPlayerData(player))
+				return;
 			VRPlayerData data = PlayerTracker.getPlayerData(player, true);
 			data.height = height;
 		});
