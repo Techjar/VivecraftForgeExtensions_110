@@ -64,6 +64,7 @@ public class AimFixHandler extends ChannelInboundHandlerAdapter {
 				player.eyeHeight = 0;
 
 				// Set up offset to fix relative positions
+				data = PlayerTracker.getPlayerData(player);
 				data.offset = oldPos.subtract(pos);
 			}
 
