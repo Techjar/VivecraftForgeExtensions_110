@@ -1,5 +1,8 @@
 package com.techjar.vivecraftforge.entity.ai.goal;
 
+import java.util.function.Predicate;
+import javax.annotation.Nullable;
+
 import com.techjar.vivecraftforge.util.PlayerTracker;
 import com.techjar.vivecraftforge.util.Util;
 import com.techjar.vivecraftforge.util.VRPlayerData;
@@ -12,8 +15,8 @@ public class VREndermanFindPlayerGoal extends EndermanEntity.FindPlayerGoal {
 	private final EntityPredicate targetPredicate;
 	private final EntityPredicate lineOfSightPredicate = (new EntityPredicate()).setLineOfSiteRequired();
 
-	public VREndermanFindPlayerGoal(EndermanEntity enderman) {
-		super(enderman);
+	public VREndermanFindPlayerGoal(EndermanEntity enderman, @Nullable Predicate<LivingEntity> p_i241912_2_) {
+		super(enderman, p_i241912_2_);
 		this.targetPredicate = (new EntityPredicate()).setDistance(this.getTargetDistance()).setCustomPredicate((p) -> {
 			if (PlayerTracker.hasPlayerData((PlayerEntity)p))
 				return Util.shouldEndermanAttackVRPlayer(enderman, (PlayerEntity)p);

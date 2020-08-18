@@ -191,7 +191,7 @@ public class EventHandlerServer {
 		} else if (event.getEntity() instanceof EndermanEntity) {
 			EndermanEntity enderman = (EndermanEntity)event.getEntity();
 			Util.replaceAIGoal(enderman, enderman.goalSelector, EndermanEntity.StareGoal.class, () -> new VREndermanStareGoal(enderman));
-			Util.replaceAIGoal(enderman, enderman.targetSelector, EndermanEntity.FindPlayerGoal.class, () -> new VREndermanFindPlayerGoal(enderman));
+			Util.replaceAIGoal(enderman, enderman.targetSelector, EndermanEntity.FindPlayerGoal.class, () -> new VREndermanFindPlayerGoal(enderman, enderman::func_233680_b_));
 		}
 	}
 
