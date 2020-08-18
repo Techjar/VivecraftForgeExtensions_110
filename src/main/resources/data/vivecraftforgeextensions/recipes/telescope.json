@@ -16,7 +16,7 @@
     "count": 1,
     "nbt": {
       "display": {
-        "Name": "{\"translate\":\"vivecraft.item.telescope\"}"
+        "Name": "{\"text\":\"Eye of the Farseer\"}"
       },
       "Unbreakable": true,
       "HideFlags": 4

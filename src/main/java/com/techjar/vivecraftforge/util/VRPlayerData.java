@@ -1,9 +1,8 @@
 package com.techjar.vivecraftforge.util;
 
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec3d;
 
 public class VRPlayerData {
-	public Vector3d offset = new Vector3d(0, 0, 0);
 	public ObjectInfo head = new ObjectInfo();
 	public ObjectInfo controller0 = new ObjectInfo();
 	public ObjectInfo controller1 = new ObjectInfo();
@@ -14,7 +13,6 @@ public class VRPlayerData {
 	public float bowDraw;
 	public float height;
 	public int activeHand;
-	public boolean crawling;
 
 	public ObjectInfo getController(int c) {
 		return c == 0 ? controller0 : controller1;
@@ -29,11 +27,11 @@ public class VRPlayerData {
 		public float rotY;
 		public float rotZ;
 
-		public Vector3d getPos() {
-			return new Vector3d(posX, posY, posZ);
+		public Vec3d getPos() {
+			return new Vec3d(posX, posY, posZ);
 		}
 
-		public void setPos(Vector3d pos) {
+		public void setPos(Vec3d pos) {
 			posX = pos.getX();
 			posY = pos.getY();
 			posZ = pos.getZ();

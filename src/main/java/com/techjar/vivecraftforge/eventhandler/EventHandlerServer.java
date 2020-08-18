@@ -11,8 +11,9 @@ import com.techjar.vivecraftforge.util.LogHelper;
 import com.techjar.vivecraftforge.util.PlayerTracker;
 import com.techjar.vivecraftforge.util.Util;
 import com.techjar.vivecraftforge.util.VRPlayerData;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.IProjectile;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Pose;
 import net.minecraft.entity.ai.goal.CreeperSwellGoal;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.CreeperEntity;
@@ -21,13 +22,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.ArrowEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -144,8 +145,8 @@ public class EventHandlerServer {
 				Util.scheduler.schedule(() -> {
 					ServerLifecycleHooks.getCurrentServer().runAsync(() -> {
 						if (player.connection.getNetworkManager().isChannelOpen() && !PlayerTracker.hasPlayerData(player)) {
-							player.sendMessage(new StringTextComponent(Config.vrOnlyKickMessage.get()), net.minecraft.util.Util.DUMMY_UUID);
-							player.sendMessage(new StringTextComponent("If this is not a VR client, you will be kicked in " + Config.vrOnlyKickDelay.get() + " seconds."), net.minecraft.util.Util.DUMMY_UUID);
+							player.sendMessage(new StringTextComponent(Config.vrOnlyKickMessage.get()));
+							player.sendMessage(new StringTextComponent("If this is not a VR client, you will be kicked in " + Config.vrOnlyKickDelay.get() + " seconds."));
 							Util.scheduler.schedule(() -> {
 								ServerLifecycleHooks.getCurrentServer().runAsync(() -> {
 									if (player.connection.getNetworkManager().isChannelOpen() && !PlayerTracker.hasPlayerData(player)) {
@@ -157,18 +158,26 @@ public class EventHandlerServer {
 					});
 				}, 1000, TimeUnit.MILLISECONDS);
 			}
-		} else if (event.getEntity() instanceof ProjectileEntity) {
-			ProjectileEntity projectile = (ProjectileEntity)event.getEntity();
-			if (!(projectile.func_234616_v_() instanceof PlayerEntity))
+		} else if (event.getEntity() instanceof IProjectile) {
+			Entity projectile = event.getEntity();
+
+			Entity shooterEntity = null;
+			if (projectile instanceof AbstractArrowEntity)
+				shooterEntity = ((AbstractArrowEntity)projectile).getShooter();
+			else if (projectile instanceof ThrowableEntity)
+				shooterEntity = ((ThrowableEntity)projectile).getThrower();
+
+			if (!(shooterEntity instanceof PlayerEntity))
 				return;
-			PlayerEntity shooter = (PlayerEntity)projectile.func_234616_v_();
+			PlayerEntity shooter = (PlayerEntity)shooterEntity;
+
 			if (!PlayerTracker.hasPlayerData(shooter))
 				return;
 
 			boolean arrow = projectile instanceof AbstractArrowEntity && !(projectile instanceof TridentEntity);
-			VRPlayerData data = PlayerTracker.getPlayerDataAbsolute(shooter);
-			Vector3d pos = data.getController(data.activeHand).getPos();
-			Vector3d aim = data.getController(data.activeHand).getRot().multiply(new Vector3d(0, 0, -1));
+			VRPlayerData data = PlayerTracker.getPlayerData(shooter);
+			Vec3d pos = data.getController(data.activeHand).getPos();
+			Vec3d aim = data.getController(data.activeHand).getRot().multiply(new Vec3d(0, 0, -1));
 
 			if (arrow && !data.seated && data.bowDraw > 0) {
 				pos = data.getController(0).getPos();
@@ -178,10 +187,10 @@ public class EventHandlerServer {
 			pos = pos.add(aim.scale(0.6));
 			double vel = projectile.getMotion().length();
 			projectile.setPosition(pos.x, pos.y, pos.z);
-			projectile.shoot(aim.x, aim.y, aim.z, (float)vel, 0.0f);
+			((IProjectile)projectile).shoot(aim.x, aim.y, aim.z, (float)vel, 0.0f);
 
-			Vector3d shooterMotion = shooter.getMotion();
-			projectile.setMotion(projectile.getMotion().add(shooterMotion.x, shooter.isOnGround() ? 0.0 : shooterMotion.y, shooterMotion.z));
+			Vec3d shooterMotion = shooter.getMotion();
+			projectile.setMotion(projectile.getMotion().add(shooterMotion.x, shooter.onGround ? 0.0 : shooterMotion.y, shooterMotion.z));
 
 			LogHelper.debug("Projectile direction: {}", aim);
 			LogHelper.debug("Projectile velocity: {}", vel);
@@ -191,7 +200,7 @@ public class EventHandlerServer {
 		} else if (event.getEntity() instanceof EndermanEntity) {
 			EndermanEntity enderman = (EndermanEntity)event.getEntity();
 			Util.replaceAIGoal(enderman, enderman.goalSelector, EndermanEntity.StareGoal.class, () -> new VREndermanStareGoal(enderman));
-			Util.replaceAIGoal(enderman, enderman.targetSelector, EndermanEntity.FindPlayerGoal.class, () -> new VREndermanFindPlayerGoal(enderman, enderman::func_233680_b_));
+			Util.replaceAIGoal(enderman, enderman.targetSelector, EndermanEntity.FindPlayerGoal.class, () -> new VREndermanFindPlayerGoal(enderman));
 		}
 	}
 
@@ -200,12 +209,12 @@ public class EventHandlerServer {
 		if (!PlayerTracker.hasPlayerData(event.getPlayer()))
 			return;
 
-		VRPlayerData data = PlayerTracker.getPlayerDataAbsolute(event.getPlayer());
+		VRPlayerData data = PlayerTracker.getPlayerData(event.getPlayer());
 		ItemEntity item = event.getEntityItem();
 
-		Vector3d pos = data.getController(0).getPos();
-		Vector3d aim = data.getController(0).getRot().multiply(new Vector3d(0, 0, -1));
-		Vector3d aimUp = data.getController(0).getRot().multiply(new Vector3d(0, 1, 0));
+		Vec3d pos = data.getController(0).getPos();
+		Vec3d aim = data.getController(0).getRot().multiply(new Vec3d(0, 0, -1));
+		Vec3d aimUp = data.getController(0).getRot().multiply(new Vec3d(0, 1, 0));
 		double pitch = Math.toDegrees(Math.asin(-aim.y));
 
 		pos = pos.add(aim.scale(0.2)).subtract(aimUp.scale(0.4 * (1 - Math.abs(pitch) / 90)));
@@ -218,14 +227,5 @@ public class EventHandlerServer {
 	public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
 		NetworkManager netManager = ((ServerPlayerEntity)event.getPlayer()).connection.getNetworkManager();
 		netManager.channel().pipeline().addBefore("packet_handler", "vr_aim_fix", new AimFixHandler(netManager));
-	}
-
-	@SubscribeEvent
-	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-		if (event.phase == TickEvent.Phase.END) {
-			VRPlayerData data = PlayerTracker.getPlayerData(event.player);
-			if (data != null && data.crawling)
-				event.player.setPose(Pose.SWIMMING);
-		}
 	}
 }

@@ -60,8 +60,6 @@ public class PacketVersion implements IPacket {
 				ChannelHandler.sendTo(new PacketTeleport(), player);
 			if (Config.climbeyEnabled.get())
 				ChannelHandler.sendTo(new PacketClimbing(Config.blockListMode.get(), Config.blockList.get()), player);
-			if (Config.crawlingEnabled.get())
-				ChannelHandler.sendTo(new PacketCrawl(), player);
 
 			if (Config.teleportLimited.get()) {
 				HashMap<String, Object> map = new HashMap<>();
@@ -82,14 +80,14 @@ public class PacketVersion implements IPacket {
 			context.get().enqueueWork(() -> {
 				PlayerTracker.players.put(player.getGameProfile().getId(), new VRPlayerData());
 				if (Config.enableJoinMessages.get() && !Config.joinMessageVR.get().isEmpty())
-					player.getServer().getPlayerList().func_232641_a_(new StringTextComponent(String.format(Config.joinMessageVR.get(), player.getDisplayName())), ChatType.SYSTEM, net.minecraft.util.Util.DUMMY_UUID);
+					player.getServer().getPlayerList().sendMessage(new StringTextComponent(String.format(Config.joinMessageVR.get(), player.getDisplayName())));
 			});
 		} else {
 			LogHelper.info("Non-VR player joined: {}", message);
 			context.get().enqueueWork(() -> {
 				PlayerTracker.nonvrPlayers.add(player.getGameProfile().getId());
 				if (Config.enableJoinMessages.get() && !Config.joinMessageNonVR.get().isEmpty())
-					player.getServer().getPlayerList().func_232641_a_(new StringTextComponent(String.format(Config.joinMessageNonVR.get(), player.getDisplayName())), ChatType.SYSTEM, net.minecraft.util.Util.DUMMY_UUID);
+					player.getServer().getPlayerList().sendMessage(new StringTextComponent(String.format(Config.joinMessageNonVR.get(), player.getDisplayName())));
 			});
 		}
 	}

@@ -4,10 +4,10 @@ import com.techjar.vivecraftforge.util.LogHelper;
 
 import com.techjar.vivecraftforge.network.packet.*;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
@@ -32,7 +32,6 @@ public class ChannelHandler {
 		addDiscriminator(11, new Message<>(PacketSettingOverride.class));
 		addDiscriminator(12, new Message<>(PacketHeight.class));
 		addDiscriminator(13, new Message<>(PacketActiveHand.class));
-		addDiscriminator(14, new Message<>(PacketCrawl.class));
 
 		LogHelper.debug("Networking initialized");
 	}
@@ -65,7 +64,7 @@ public class ChannelHandler {
 		CHANNEL.send(PacketDistributor.TRACKING_CHUNK.with(() -> chunk), message);
 	}
 
-	public static void sendToAllInDimension(IPacket message, RegistryKey<World> dimension) {
+	public static void sendToAllInDimension(IPacket message, DimensionType dimension) {
 		CHANNEL.send(PacketDistributor.DIMENSION.with(() -> dimension), message);
 	}
 

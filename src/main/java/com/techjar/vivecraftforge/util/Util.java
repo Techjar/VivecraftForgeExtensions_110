@@ -1,5 +1,6 @@
 package com.techjar.vivecraftforge.util;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -12,7 +13,7 @@ import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -58,11 +59,11 @@ public class Util {
 
 	public static boolean shouldEndermanAttackVRPlayer(EndermanEntity enderman, PlayerEntity player) {
 		ItemStack itemstack = player.inventory.armorInventory.get(3);
-		if (!itemstack.isEnderMask(player, enderman)) {
-			VRPlayerData data = PlayerTracker.getPlayerDataAbsolute(player);
+		if (itemstack.getItem() == Blocks.CARVED_PUMPKIN.asItem()) {
+			VRPlayerData data = PlayerTracker.getPlayerData(player);
 			Quaternion quat = data.head.getRot();
-			Vector3d vector3d = quat.multiply(new Vector3d(0, 0, -1));
-			Vector3d vector3d1 = new Vector3d(enderman.getPosX() - data.head.posX, enderman.getPosYEye() - data.head.posY, enderman.getPosZ() - data.head.posZ);
+			Vec3d vector3d = quat.multiply(new Vec3d(0, 0, -1));
+			Vec3d vector3d1 = new Vec3d(enderman.getPosX() - data.head.posX, enderman.getPosYEye() - data.head.posY, enderman.getPosZ() - data.head.posZ);
 			double d0 = vector3d1.length();
 			vector3d1 = vector3d1.normalize();
 			double d1 = vector3d.dotProduct(vector3d1);
@@ -72,8 +73,8 @@ public class Util {
 		return false;
 	}
 
-	public static boolean canEntityBeSeen(Entity entity, Vector3d playerEyePos) {
-		Vector3d entityEyePos = new Vector3d(entity.getPosX(), entity.getPosYEye(), entity.getPosZ());
+	public static boolean canEntityBeSeen(Entity entity, Vec3d playerEyePos) {
+		Vec3d entityEyePos = new Vec3d(entity.getPosX(), entity.getPosYEye(), entity.getPosZ());
 		return entity.world.rayTraceBlocks(new RayTraceContext(playerEyePos, entityEyePos, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, entity)).getType() == RayTraceResult.Type.MISS;
 	}
 

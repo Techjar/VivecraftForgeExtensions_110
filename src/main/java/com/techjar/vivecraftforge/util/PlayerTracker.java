@@ -52,32 +52,6 @@ public class PlayerTracker {
 		return getPlayerData(entity, false);
 	}
 
-	public static VRPlayerData getPlayerDataAbsolute(PlayerEntity entity) {
-		VRPlayerData data = getPlayerData(entity);
-		if (data == null)
-			return null;
-
-		VRPlayerData absData = new VRPlayerData();
-
-		absData.handsReversed = data.handsReversed;
-		absData.worldScale = data.worldScale;
-		absData.seated = data.seated;
-		absData.freeMove = data.freeMove;
-		absData.bowDraw = data.bowDraw;
-		absData.height = data.height;
-		absData.activeHand = data.activeHand;
-		absData.crawling = data.crawling;
-
-		absData.head.setPos(data.head.getPos().add(entity.getPositionVec()).add(data.offset));
-		absData.head.setRot(data.head.getRot());
-		absData.controller0.setPos(data.controller0.getPos().add(entity.getPositionVec()).add(data.offset));
-		absData.controller0.setRot(data.controller0.getRot());
-		absData.controller1.setPos(data.controller1.getPos().add(entity.getPositionVec()).add(data.offset));
-		absData.controller1.setRot(data.controller1.getRot());
-
-		return absData;
-	}
-
 	public static boolean hasPlayerData(PlayerEntity entity) {
 		return players.containsKey(entity.getGameProfile().getId());
 	}

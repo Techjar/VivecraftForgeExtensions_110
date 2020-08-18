@@ -1,13 +1,8 @@
 package com.techjar.vivecraftforge.entity.ai.goal;
 
-import java.util.function.Predicate;
-import javax.annotation.Nullable;
-
 import com.techjar.vivecraftforge.util.PlayerTracker;
 import com.techjar.vivecraftforge.util.Util;
-import com.techjar.vivecraftforge.util.VRPlayerData;
 import net.minecraft.entity.EntityPredicate;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.player.PlayerEntity;
 
@@ -15,8 +10,8 @@ public class VREndermanFindPlayerGoal extends EndermanEntity.FindPlayerGoal {
 	private final EntityPredicate targetPredicate;
 	private final EntityPredicate lineOfSightPredicate = (new EntityPredicate()).setLineOfSiteRequired();
 
-	public VREndermanFindPlayerGoal(EndermanEntity enderman, @Nullable Predicate<LivingEntity> p_i241912_2_) {
-		super(enderman, p_i241912_2_);
+	public VREndermanFindPlayerGoal(EndermanEntity enderman) {
+		super(enderman);
 		this.targetPredicate = (new EntityPredicate()).setDistance(this.getTargetDistance()).setCustomPredicate((p) -> {
 			if (PlayerTracker.hasPlayerData((PlayerEntity)p))
 				return Util.shouldEndermanAttackVRPlayer(enderman, (PlayerEntity)p);
@@ -53,10 +48,6 @@ public class VREndermanFindPlayerGoal extends EndermanEntity.FindPlayerGoal {
 		if (this.nearestTarget == null || !PlayerTracker.hasPlayerData((PlayerEntity)this.nearestTarget)) {
 			super.tick();
 			return;
-		}
-
-		if (this.enderman.getAttackTarget() == null) {
-			super.setNearestTarget(null);
 		}
 
 		if (this.player != null) {
