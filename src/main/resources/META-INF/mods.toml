@@ -4,7 +4,7 @@ license="GPL v3"
 
 [[mods]]
     modId="vivecraftforgeextensions"
-    version="1.3.0"
+    version="1.3.1"
     displayName="Vivecraft Forge Extensions"
     displayURL="https://www.curseforge.com/minecraft/mc-mods/vivecraft-forge-extensions"
     logoFile="logo.png"
