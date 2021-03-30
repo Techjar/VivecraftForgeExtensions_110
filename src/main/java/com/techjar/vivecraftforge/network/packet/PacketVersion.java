@@ -61,7 +61,7 @@ public class PacketVersion implements IPacket {
 			});
 			if (Config.enableJoinMessages && !Config.joinMessageVR.isEmpty())
 				String[] formats = new MessageFormatter().player(player).format(Config.joinMessageVR).split("\\n");
-				for string line : format.Split('\\n') {
+				for String line : formats {
 					player.getServer().getPlayerList().sendMessage(line);
 				}
 		} else {
@@ -74,7 +74,7 @@ public class PacketVersion implements IPacket {
 			});
 			if (Config.enableJoinMessages && !Config.joinMessageCompanion.isEmpty())
 				String[] formats = new MessageFormatter().player(player).format(Config.joinMessageCompanion).split("\\n");
-				for string line : format.Split('\\n') {
+				for String line : formats {
 					player.getServer().getPlayerList().sendMessage(line);
 				}
 		}
