@@ -60,7 +60,10 @@ public class PacketVersion implements IPacket {
 				}
 			});
 			if (Config.enableJoinMessages && !Config.joinMessageVR.isEmpty())
-				player.getServer().getPlayerList().sendMessage(new MessageFormatter().player(player).format(Config.joinMessageVR));
+				String[] formats = new MessageFormatter().player(player).format(Config.joinMessageVR).split("\\n");
+				for String line : formats {
+					player.getServer().getPlayerList().sendMessage(line);
+				}
 		} else {
 			LogHelper.info("Non-VR player joined: %s", message);
 			player.getServerWorld().addScheduledTask(new Runnable() {
@@ -70,7 +73,10 @@ public class PacketVersion implements IPacket {
 				}
 			});
 			if (Config.enableJoinMessages && !Config.joinMessageCompanion.isEmpty())
-				player.getServer().getPlayerList().sendMessage(new MessageFormatter().player(player).format(Config.joinMessageCompanion));
+				String[] formats = new MessageFormatter().player(player).format(Config.joinMessageCompanion).split("\\n");
+				for String line : formats {
+					player.getServer().getPlayerList().sendMessage(line);
+				}
 		}
 	}
 }
