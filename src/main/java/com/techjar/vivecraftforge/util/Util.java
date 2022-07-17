@@ -1,18 +1,18 @@
 package com.techjar.vivecraftforge.util;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.ai.goal.GoalSelector;
-import net.minecraft.entity.ai.goal.PrioritizedGoal;
-import net.minecraft.entity.monster.EndermanEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ArrowEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.GoalSelector;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
+import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -35,20 +35,20 @@ public class Util {
 	/*
 	 * This is mostly copied from VSE
 	 */
-	public static boolean isHeadshot(LivingEntity target, ArrowEntity arrow) {
+	public static boolean isHeadshot(LivingEntity target, Arrow arrow) {
 		if (target.isPassenger()) return false;
-		if (target instanceof PlayerEntity) {
-			PlayerEntity player = (PlayerEntity)target;
-			if (player.isSneaking()) {
+		if (target instanceof Player) {
+			Player player = (Player)target;
+			if (player.isShiftKeyDown()) {
 				//totalHeight = 1.65;
 				//bodyHeight = 1.20;
 				//headHeight = 0.45;
-				if (arrow.getPosY() >= player.getPosY() + 1.20) return true;
+				if (arrow.getY() >= player.getY() + 1.20) return true;
 			} else {
 				//totalHeight = 1.80;
 				//bodyHeight = 1.35;
 				//headHeight = 0.45;
-				if (arrow.getPosY() >= player.getPosY() + 1.35) return true;
+				if (arrow.getY() >= player.getY() + 1.35) return true;
 			}
 		} else {
 			// TODO: mobs
@@ -56,29 +56,29 @@ public class Util {
 		return false;
 	}
 
-	public static boolean shouldEndermanAttackVRPlayer(EndermanEntity enderman, PlayerEntity player) {
-		ItemStack itemstack = player.inventory.armorInventory.get(3);
+	public static boolean shouldEndermanAttackVRPlayer(EnderMan enderman, Player player) {
+		ItemStack itemstack = player.getInventory().armor.get(3);
 		if (!itemstack.isEnderMask(player, enderman)) {
 			VRPlayerData data = PlayerTracker.getPlayerDataAbsolute(player);
 			Quaternion quat = data.head.getRot();
-			Vector3d vector3d = quat.multiply(new Vector3d(0, 0, -1));
-			Vector3d vector3d1 = new Vector3d(enderman.getPosX() - data.head.posX, enderman.getPosYEye() - data.head.posY, enderman.getPosZ() - data.head.posZ);
+			Vec3 vector3d = quat.multiply(new Vec3(0, 0, -1));
+			Vec3 vector3d1 = new Vec3(enderman.getX() - data.head.posX, enderman.getEyeY() - data.head.posY, enderman.getZ() - data.head.posZ);
 			double d0 = vector3d1.length();
 			vector3d1 = vector3d1.normalize();
-			double d1 = vector3d.dotProduct(vector3d1);
+			double d1 = vector3d.dot(vector3d1);
 			return d1 > 1.0D - 0.025D / d0 && canEntityBeSeen(enderman, data.head.getPos());
 		}
 
 		return false;
 	}
 
-	public static boolean canEntityBeSeen(Entity entity, Vector3d playerEyePos) {
-		Vector3d entityEyePos = new Vector3d(entity.getPosX(), entity.getPosYEye(), entity.getPosZ());
-		return entity.world.rayTraceBlocks(new RayTraceContext(playerEyePos, entityEyePos, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, entity)).getType() == RayTraceResult.Type.MISS;
+	public static boolean canEntityBeSeen(Entity entity, Vec3 playerEyePos) {
+		Vec3 entityEyePos = new Vec3(entity.getX(), entity.getEyeY(), entity.getZ());
+		return entity.level.clip(new ClipContext(playerEyePos, entityEyePos, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, entity)).getType() == HitResult.Type.MISS;
 	}
 
-	public static void replaceAIGoal(MobEntity entity, GoalSelector goalSelector, Class<? extends Goal> targetGoal, Supplier<Goal> newGoalSupplier) {
-		PrioritizedGoal goal = goalSelector.goals.stream().filter((g) -> targetGoal.isInstance(g.getGoal())).findFirst().orElse(null);
+	public static void replaceAIGoal(Mob entity, GoalSelector goalSelector, Class<? extends Goal> targetGoal, Supplier<Goal> newGoalSupplier) {
+		WrappedGoal goal = goalSelector.availableGoals.stream().filter((g) -> targetGoal.isInstance(g.getGoal())).findFirst().orElse(null);
 		if (goal != null) {
 			goalSelector.removeGoal(goal.getGoal());
 			goalSelector.addGoal(goal.getPriority(), newGoalSupplier.get());

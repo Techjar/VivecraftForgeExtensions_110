@@ -1,8 +1,8 @@
 package com.techjar.vivecraftforge.network.packet;
 
 import com.techjar.vivecraftforge.network.IPacket;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -28,7 +28,7 @@ public class PacketUberPacket implements IPacket {
 	}
 
 	@Override
-	public void encode(final PacketBuffer buffer) {
+	public void encode(final FriendlyByteBuf buffer) {
 		buffer.writeLong(uuid.getMostSignificantBits());
 		buffer.writeLong(uuid.getLeastSignificantBits());
 		headData.encode(buffer);
@@ -39,7 +39,7 @@ public class PacketUberPacket implements IPacket {
 	}
 
 	@Override
-	public void decode(final PacketBuffer buffer) {
+	public void decode(final FriendlyByteBuf buffer) {
 		uuid = new UUID(buffer.readLong(), buffer.readLong());
 		headData = new PacketHeadData();
 		headData.decode(buffer);

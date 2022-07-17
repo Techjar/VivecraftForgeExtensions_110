@@ -1,9 +1,9 @@
 package com.techjar.vivecraftforge.util;
 
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 
 public class VRPlayerData {
-	public Vector3d offset = new Vector3d(0, 0, 0);
+	public Vec3 offset = new Vec3(0, 0, 0);
 	public ObjectInfo head = new ObjectInfo();
 	public ObjectInfo controller0 = new ObjectInfo();
 	public ObjectInfo controller1 = new ObjectInfo();
@@ -29,14 +29,14 @@ public class VRPlayerData {
 		public float rotY;
 		public float rotZ;
 
-		public Vector3d getPos() {
-			return new Vector3d(posX, posY, posZ);
+		public Vec3 getPos() {
+			return new Vec3(posX, posY, posZ);
 		}
 
-		public void setPos(Vector3d pos) {
-			posX = pos.getX();
-			posY = pos.getY();
-			posZ = pos.getZ();
+		public void setPos(Vec3 pos) {
+			posX = pos.x();
+			posY = pos.y();
+			posZ = pos.z();
 		}
 
 		public Quaternion getRot() {

@@ -5,9 +5,9 @@ import java.util.function.Supplier;
 import com.techjar.vivecraftforge.network.IPacket;
 import com.techjar.vivecraftforge.util.PlayerTracker;
 import com.techjar.vivecraftforge.util.VRPlayerData;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 
 public class PacketDraw implements IPacket {
 	public float drawDist;
@@ -20,12 +20,12 @@ public class PacketDraw implements IPacket {
 	}
 
 	@Override
-	public void encode(final PacketBuffer buffer) {
+	public void encode(final FriendlyByteBuf buffer) {
 		buffer.writeFloat(drawDist);
 	}
 
 	@Override
-	public void decode(final PacketBuffer buffer) {
+	public void decode(final FriendlyByteBuf buffer) {
 		drawDist = buffer.readFloat();
 	}
 
@@ -35,7 +35,7 @@ public class PacketDraw implements IPacket {
 
 	@Override
 	public void handleServer(final Supplier<NetworkEvent.Context> context) {
-		ServerPlayerEntity player = context.get().getSender();
+		ServerPlayer player = context.get().getSender();
 		context.get().enqueueWork(() -> {
 			if (!PlayerTracker.hasPlayerData(player))
 				return;

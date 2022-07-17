@@ -6,74 +6,74 @@ import javax.annotation.Nullable;
 import com.techjar.vivecraftforge.util.PlayerTracker;
 import com.techjar.vivecraftforge.util.Util;
 import com.techjar.vivecraftforge.util.VRPlayerData;
-import net.minecraft.entity.EntityPredicate;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.monster.EndermanEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.player.Player;
 
-public class VREndermanFindPlayerGoal extends EndermanEntity.FindPlayerGoal {
-	private final EntityPredicate targetPredicate;
-	private final EntityPredicate lineOfSightPredicate = (new EntityPredicate()).setLineOfSiteRequired();
+public class VREndermanFindPlayerGoal extends EnderMan.EndermanLookForPlayerGoal {
+	private final TargetingConditions targetPredicate;
+	private final TargetingConditions lineOfSightPredicate = TargetingConditions.forCombat().ignoreLineOfSight();
 
-	public VREndermanFindPlayerGoal(EndermanEntity enderman, @Nullable Predicate<LivingEntity> p_i241912_2_) {
+	public VREndermanFindPlayerGoal(EnderMan enderman, @Nullable Predicate<LivingEntity> p_i241912_2_) {
 		super(enderman, p_i241912_2_);
-		this.targetPredicate = (new EntityPredicate()).setDistance(this.getTargetDistance()).setCustomPredicate((p) -> {
-			if (PlayerTracker.hasPlayerData((PlayerEntity)p))
-				return Util.shouldEndermanAttackVRPlayer(enderman, (PlayerEntity)p);
+		this.targetPredicate = TargetingConditions.forCombat().range(this.getFollowDistance()).selector((p) -> {
+			if (PlayerTracker.hasPlayerData((Player)p))
+				return Util.shouldEndermanAttackVRPlayer(enderman, (Player)p);
 			else
-				return enderman.shouldAttackPlayer((PlayerEntity)p);
+				return enderman.isLookingAtMe((Player)p);
 		});
 	}
 
 	@Override
-	public boolean shouldExecute() {
-		this.player = this.enderman.world.getClosestPlayer(this.targetPredicate, this.enderman);
-		return this.player != null;
+	public boolean canUse() {
+		this.pendingTarget = this.enderman.level.getNearestPlayer(this.targetPredicate, this.enderman);
+		return this.pendingTarget != null;
 	}
 
 	@Override
-	public boolean shouldContinueExecuting() {
-		if (this.player == null || !PlayerTracker.hasPlayerData(this.player))
-			return super.shouldContinueExecuting();
+	public boolean canContinueToUse() {
+		if (this.pendingTarget == null || !PlayerTracker.hasPlayerData(this.pendingTarget))
+			return super.canContinueToUse();
 
-		if (this.player != null) {
-			if (!Util.shouldEndermanAttackVRPlayer(this.enderman, this.player)) {
+		if (this.pendingTarget != null) {
+			if (!Util.shouldEndermanAttackVRPlayer(this.enderman, this.pendingTarget)) {
 				return false;
 			} else {
-				this.enderman.faceEntity(this.player, 10.0F, 10.0F);
+				this.enderman.lookAt(this.pendingTarget, 10.0F, 10.0F);
 				return true;
 			}
 		} else {
-			return (this.nearestTarget != null && this.lineOfSightPredicate.canTarget(this.enderman, this.nearestTarget)) || super.shouldContinueExecuting();
+			return (this.target != null && this.lineOfSightPredicate.test(this.enderman, this.target)) || super.canContinueToUse();
 		}
 	}
 
 	@Override
 	public void tick() {
-		if (this.nearestTarget == null || !PlayerTracker.hasPlayerData((PlayerEntity)this.nearestTarget)) {
+		if (this.target == null || !PlayerTracker.hasPlayerData((Player)this.target)) {
 			super.tick();
 			return;
 		}
 
-		if (this.enderman.getAttackTarget() == null) {
-			super.setNearestTarget(null);
+		if (this.enderman.getTarget() == null) {
+			super.setTarget(null);
 		}
 
-		if (this.player != null) {
+		if (this.pendingTarget != null) {
 			if (--this.aggroTime <= 0) {
-				this.nearestTarget = this.player;
-				this.player = null;
-				super.startExecuting();
+				this.target = this.pendingTarget;
+				this.pendingTarget = null;
+				super.start();
 			}
 		} else {
-			if (this.nearestTarget != null && !this.enderman.isPassenger()) {
-				if (Util.shouldEndermanAttackVRPlayer(this.enderman, (PlayerEntity)this.nearestTarget)) {
-					if (this.nearestTarget.getDistanceSq(this.enderman) < 16.0D) {
-						this.enderman.teleportRandomly();
+			if (this.target != null && !this.enderman.isPassenger()) {
+				if (Util.shouldEndermanAttackVRPlayer(this.enderman, (Player)this.target)) {
+					if (this.target.distanceToSqr(this.enderman) < 16.0D) {
+						this.enderman.teleport();
 					}
 
 					this.teleportTime = 0;
-				} else if (this.nearestTarget.getDistanceSq(this.enderman) > 256.0D && this.teleportTime++ >= 30 && this.enderman.teleportToEntity(this.nearestTarget)) {
+				} else if (this.target.distanceToSqr(this.enderman) > 256.0D && this.teleportTime++ >= 30 && this.enderman.teleportTowards(this.target)) {
 					this.teleportTime = 0;
 				}
 			}

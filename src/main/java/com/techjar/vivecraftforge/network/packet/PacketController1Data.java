@@ -5,9 +5,9 @@ import java.util.function.Supplier;
 import com.techjar.vivecraftforge.network.IPacket;
 import com.techjar.vivecraftforge.util.PlayerTracker;
 import com.techjar.vivecraftforge.util.VRPlayerData;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 
 public class PacketController1Data implements IPacket {
 	public boolean handsReversed;
@@ -34,7 +34,7 @@ public class PacketController1Data implements IPacket {
 	}
 
 	@Override
-	public void encode(PacketBuffer buffer) {
+	public void encode(FriendlyByteBuf buffer) {
 		buffer.writeBoolean(handsReversed);
 		buffer.writeFloat(posX);
 		buffer.writeFloat(posY);
@@ -46,7 +46,7 @@ public class PacketController1Data implements IPacket {
 	}
 
 	@Override
-	public void decode(PacketBuffer buffer) {
+	public void decode(FriendlyByteBuf buffer) {
 		handsReversed = buffer.readBoolean();
 		posX = buffer.readFloat();
 		posY = buffer.readFloat();
@@ -63,7 +63,7 @@ public class PacketController1Data implements IPacket {
 
 	@Override
 	public void handleServer(final Supplier<NetworkEvent.Context> context) {
-		ServerPlayerEntity player = context.get().getSender();
+		ServerPlayer player = context.get().getSender();
 		context.get().enqueueWork(() -> {
 			if (!PlayerTracker.hasPlayerData(player))
 				return;

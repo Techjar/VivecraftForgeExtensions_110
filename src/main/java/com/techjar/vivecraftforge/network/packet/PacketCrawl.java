@@ -6,10 +6,10 @@ import com.techjar.vivecraftforge.Config;
 import com.techjar.vivecraftforge.network.IPacket;
 import com.techjar.vivecraftforge.util.PlayerTracker;
 import com.techjar.vivecraftforge.util.VRPlayerData;
-import net.minecraft.entity.Pose;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 
 public class PacketCrawl implements IPacket {
 	public boolean crawling;
@@ -22,11 +22,11 @@ public class PacketCrawl implements IPacket {
 	}
 
 	@Override
-	public void encode(PacketBuffer buffer) {
+	public void encode(FriendlyByteBuf buffer) {
 	}
 
 	@Override
-	public void decode(PacketBuffer buffer) {
+	public void decode(FriendlyByteBuf buffer) {
 		crawling = buffer.readBoolean();
 	}
 
@@ -37,7 +37,7 @@ public class PacketCrawl implements IPacket {
 	@Override
 	public void handleServer(Supplier<NetworkEvent.Context> context) {
 		if (Config.crawlingEnabled.get()) {
-			ServerPlayerEntity player = context.get().getSender();
+			ServerPlayer player = context.get().getSender();
 			context.get().enqueueWork(() -> {
 				if (!PlayerTracker.hasPlayerData(player))
 					return;

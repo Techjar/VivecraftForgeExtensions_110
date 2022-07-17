@@ -1,10 +1,9 @@
 package com.techjar.vivecraftforge;
 
 import com.techjar.vivecraftforge.util.BlockListMode;
-import net.minecraft.block.Block;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Arrays;
 import java.util.List;
@@ -79,7 +78,7 @@ public class Config {
 		builder.comment("Climbey motion settings").push("climbey");
 		climbeyEnabled = builder.comment("Whether or not climbey is allowed on this server.").define("enabled", true);
 		blockListMode = builder.comment("Mode for block list.").defineEnum("blocklistmode", BlockListMode.DISABLED);
-		blockList = builder.comment("List of blocks to whitelist or blacklist").defineList("blocklist", Arrays.asList("white_wool", "dirt", "grass_block"), (s) -> s instanceof String && GameRegistry.findRegistry(Block.class).containsKey(new ResourceLocation((String)s)));
+		blockList = builder.comment("List of blocks to whitelist or blacklist").defineList("blocklist", Arrays.asList("white_wool", "dirt", "grass_block"), (s) -> s instanceof String && ForgeRegistries.BLOCKS.containsKey(new ResourceLocation((String)s)));
 		builder.pop(); // climbey
 
 		builder.comment("Roomscale crawling settings").push("crawling");

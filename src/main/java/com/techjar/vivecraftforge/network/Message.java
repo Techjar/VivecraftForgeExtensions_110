@@ -2,9 +2,9 @@ package com.techjar.vivecraftforge.network;
 
 import java.util.function.Supplier;
 
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
 
 public class Message<T extends IPacket> {
 	private final Class<T> tClass;
@@ -17,11 +17,11 @@ public class Message<T extends IPacket> {
 		return tClass;
 	}
 
-	public final void encode(T packet, PacketBuffer buffer) {
+	public final void encode(T packet, FriendlyByteBuf buffer) {
 		packet.encode(buffer);
 	}
 
-	public final T decode(PacketBuffer buffer) {
+	public final T decode(FriendlyByteBuf buffer) {
 		T packet;
 		try {
 			packet = tClass.newInstance();

@@ -4,10 +4,10 @@ import com.techjar.vivecraftforge.network.packet.PacketController0Data;
 import com.techjar.vivecraftforge.network.packet.PacketController1Data;
 import com.techjar.vivecraftforge.network.packet.PacketHeadData;
 import com.techjar.vivecraftforge.network.packet.PacketUberPacket;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.management.PlayerList;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.players.PlayerList;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,21 +25,21 @@ public class PlayerTracker {
 		PlayerList playerList = ServerLifecycleHooks.getCurrentServer().getPlayerList();
 		for (Iterator<Map.Entry<UUID, VRPlayerData>> it = players.entrySet().iterator(); it.hasNext();) {
 			Map.Entry<UUID, VRPlayerData> entry = it.next();
-			Entity entity = playerList.getPlayerByUUID(entry.getKey());
+			Entity entity = playerList.getPlayer(entry.getKey());
 			if (entity == null) {
 				it.remove();
 			}
 		}
 		for (Iterator<UUID> it = nonvrPlayers.iterator(); it.hasNext();) {
 			UUID uuid = it.next();
-			Entity entity = playerList.getPlayerByUUID(uuid);
+			Entity entity = playerList.getPlayer(uuid);
 			if (entity == null) {
 				it.remove();
 			}
 		}
 	}
 
-	public static VRPlayerData getPlayerData(PlayerEntity entity, boolean createIfMissing) {
+	public static VRPlayerData getPlayerData(Player entity, boolean createIfMissing) {
 		VRPlayerData data = players.get(entity.getGameProfile().getId());
 		if (data == null && createIfMissing) {
 			data = new VRPlayerData();
@@ -48,11 +48,11 @@ public class PlayerTracker {
 		return data;
 	}
 
-	public static VRPlayerData getPlayerData(PlayerEntity entity) {
+	public static VRPlayerData getPlayerData(Player entity) {
 		return getPlayerData(entity, false);
 	}
 
-	public static VRPlayerData getPlayerDataAbsolute(PlayerEntity entity) {
+	public static VRPlayerData getPlayerDataAbsolute(Player entity) {
 		VRPlayerData data = getPlayerData(entity);
 		if (data == null)
 			return null;
@@ -68,17 +68,17 @@ public class PlayerTracker {
 		absData.activeHand = data.activeHand;
 		absData.crawling = data.crawling;
 
-		absData.head.setPos(data.head.getPos().add(entity.getPositionVec()).add(data.offset));
+		absData.head.setPos(data.head.getPos().add(entity.position()).add(data.offset));
 		absData.head.setRot(data.head.getRot());
-		absData.controller0.setPos(data.controller0.getPos().add(entity.getPositionVec()).add(data.offset));
+		absData.controller0.setPos(data.controller0.getPos().add(entity.position()).add(data.offset));
 		absData.controller0.setRot(data.controller0.getRot());
-		absData.controller1.setPos(data.controller1.getPos().add(entity.getPositionVec()).add(data.offset));
+		absData.controller1.setPos(data.controller1.getPos().add(entity.position()).add(data.offset));
 		absData.controller1.setRot(data.controller1.getRot());
 
 		return absData;
 	}
 
-	public static boolean hasPlayerData(PlayerEntity entity) {
+	public static boolean hasPlayerData(Player entity) {
 		return players.containsKey(entity.getGameProfile().getId());
 	}
 
@@ -97,7 +97,7 @@ public class PlayerTracker {
 		return null;
 	}
 
-	public static PacketUberPacket getPlayerDataPacket(PlayerEntity entity) {
+	public static PacketUberPacket getPlayerDataPacket(Player entity) {
 		return getPlayerDataPacket(entity.getGameProfile().getId());
 	}
 }

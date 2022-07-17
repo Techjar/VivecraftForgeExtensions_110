@@ -11,11 +11,11 @@ import com.techjar.vivecraftforge.network.IPacket;
 import com.techjar.vivecraftforge.util.LogHelper;
 import com.techjar.vivecraftforge.util.PlayerTracker;
 import com.techjar.vivecraftforge.util.VRPlayerData;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.ChatType;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraftforge.network.NetworkEvent;
 
 /*
  * Why the fuck does the client want a length-prefixed string, but sends
@@ -33,12 +33,12 @@ public class PacketVersion implements IPacket {
 	}
 
 	@Override
-	public void encode(final PacketBuffer buffer) {
-		buffer.writeString(message);
+	public void encode(final FriendlyByteBuf buffer) {
+		buffer.writeUtf(message);
 	}
 
 	@Override
-	public void decode(final PacketBuffer buffer) {
+	public void decode(final FriendlyByteBuf buffer) {
 		byte[] bytes = new byte[buffer.readableBytes()];
 		buffer.readBytes(bytes);
 		message = new String(bytes, StandardCharsets.UTF_8);
@@ -50,7 +50,7 @@ public class PacketVersion implements IPacket {
 
 	@Override
 	public void handleServer(final Supplier<NetworkEvent.Context> context) {
-		ServerPlayerEntity player = context.get().getSender();
+		ServerPlayer player = context.get().getSender();
 		ChannelHandler.sendTo(new PacketVersion(VivecraftForge.MOD_INFO.getDisplayName() + " " + VivecraftForge.MOD_INFO.getVersion()), player);
 		if (!message.contains("NONVR")) {
 			LogHelper.info("VR player joined: {}", message);
@@ -82,14 +82,14 @@ public class PacketVersion implements IPacket {
 			context.get().enqueueWork(() -> {
 				PlayerTracker.players.put(player.getGameProfile().getId(), new VRPlayerData());
 				if (Config.enableJoinMessages.get() && !Config.joinMessageVR.get().isEmpty())
-					player.getServer().getPlayerList().func_232641_a_(new StringTextComponent(String.format(Config.joinMessageVR.get(), player.getDisplayName())), ChatType.SYSTEM, net.minecraft.util.Util.DUMMY_UUID);
+					player.getServer().getPlayerList().broadcastMessage(new TextComponent(String.format(Config.joinMessageVR.get(), player.getDisplayName())), ChatType.SYSTEM, net.minecraft.Util.NIL_UUID);
 			});
 		} else {
 			LogHelper.info("Non-VR player joined: {}", message);
 			context.get().enqueueWork(() -> {
 				PlayerTracker.nonvrPlayers.add(player.getGameProfile().getId());
 				if (Config.enableJoinMessages.get() && !Config.joinMessageNonVR.get().isEmpty())
-					player.getServer().getPlayerList().func_232641_a_(new StringTextComponent(String.format(Config.joinMessageNonVR.get(), player.getDisplayName())), ChatType.SYSTEM, net.minecraft.util.Util.DUMMY_UUID);
+					player.getServer().getPlayerList().broadcastMessage(new TextComponent(String.format(Config.joinMessageNonVR.get(), player.getDisplayName())), ChatType.SYSTEM, net.minecraft.Util.NIL_UUID);
 			});
 		}
 	}

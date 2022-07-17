@@ -1,7 +1,7 @@
 
 package com.techjar.vivecraftforge.util;
 
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 
 /**
  *
@@ -107,7 +107,7 @@ public class Quaternion {
 		return new Quaternion(newW, newX, newY, newZ);
 	}
 
-	public Vector3d multiply(Vector3d vec) {
+	public Vec3 multiply(Vec3 vec) {
 		float num = this.x * 2f;
 		float num2 = this.y * 2f;
 		float num3 = this.z * 2f;
@@ -123,7 +123,7 @@ public class Quaternion {
 		double x = (1f - (num5 + num6)) * vec.x + (num7 - num12) * vec.y + (num8 + num11) * vec.z;
 		double y = (num7 + num12) * vec.x + (1f - (num4 + num6)) * vec.y + (num9 - num10) * vec.z;
 		double z = (num8 - num11) * vec.x + (num9 + num10) * vec.y + (1f - (num4 + num5)) * vec.z;
-		return new Vector3d(x, y, z);
+		return new Vec3(x, y, z);
 	}
 
 	@Override

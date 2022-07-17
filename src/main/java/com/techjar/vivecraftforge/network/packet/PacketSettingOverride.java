@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import com.techjar.vivecraftforge.network.IPacket;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 
 public class PacketSettingOverride implements IPacket {
 	public Map<String, Object> settings = new HashMap<>();
@@ -19,17 +19,17 @@ public class PacketSettingOverride implements IPacket {
 	}
 
 	@Override
-	public void encode(final PacketBuffer buffer) {
+	public void encode(final FriendlyByteBuf buffer) {
 		for (Map.Entry<String, Object> entry : settings.entrySet()) {
-			buffer.writeString(entry.getKey());
-			buffer.writeString(entry.getValue().toString());
+			buffer.writeUtf(entry.getKey());
+			buffer.writeUtf(entry.getValue().toString());
 		}
 	}
 
 	@Override
-	public void decode(final PacketBuffer buffer) {
+	public void decode(final FriendlyByteBuf buffer) {
 		while (buffer.readableBytes() > 0) {
-			settings.put(buffer.readString(32767), buffer.readString(32767));
+			settings.put(buffer.readUtf(32767), buffer.readUtf(32767));
 		}
 	}
 

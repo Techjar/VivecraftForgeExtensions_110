@@ -4,9 +4,9 @@ import java.util.function.Supplier;
 
 import com.techjar.vivecraftforge.Config;
 import com.techjar.vivecraftforge.network.IPacket;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent;
 
 public class PacketTeleport implements IPacket {
 	public float posX;
@@ -17,11 +17,11 @@ public class PacketTeleport implements IPacket {
 	}
 
 	@Override
-	public void encode(final PacketBuffer buffer) {
+	public void encode(final FriendlyByteBuf buffer) {
 	}
 
 	@Override
-	public void decode(final PacketBuffer buffer) {
+	public void decode(final FriendlyByteBuf buffer) {
 		posX = buffer.readFloat();
 		posY = buffer.readFloat();
 		posZ = buffer.readFloat();
@@ -34,8 +34,8 @@ public class PacketTeleport implements IPacket {
 	@Override
 	public void handleServer(final Supplier<NetworkEvent.Context> context) {
 		if (Config.teleportEnabled.get()) {
-			ServerPlayerEntity player = context.get().getSender();
-			context.get().enqueueWork(() -> player.setLocationAndAngles(posX, posY, posZ, player.rotationYaw, player.rotationPitch));
+			ServerPlayer player = context.get().getSender();
+			context.get().enqueueWork(() -> player.moveTo(posX, posY, posZ, player.getYRot(), player.getXRot()));
 		}
 	}
 }

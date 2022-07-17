@@ -3,28 +3,28 @@ package com.techjar.vivecraftforge.util;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.INetHandler;
-import net.minecraft.network.IPacket;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.ThreadQuickExitException;
-import net.minecraft.network.play.ServerPlayNetHandler;
-import net.minecraft.network.play.client.CPlayerDiggingPacket;
-import net.minecraft.network.play.client.CPlayerTryUseItemOnBlockPacket;
-import net.minecraft.network.play.client.CPlayerTryUseItemPacket;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.PacketListener;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.Connection;
+import net.minecraft.server.RunningOnDifferentThreadException;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.network.protocol.game.ServerboundPlayerActionPacket;
+import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
+import net.minecraft.network.protocol.game.ServerboundUseItemPacket;
+import net.minecraft.world.phys.Vec3;
 
 public class AimFixHandler extends ChannelInboundHandlerAdapter {
-	private final NetworkManager netManager;
+	private final Connection netManager;
 
-	public AimFixHandler(NetworkManager netManager) {
+	public AimFixHandler(Connection netManager) {
 		this.netManager = netManager;
 	}
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		ServerPlayerEntity player = ((ServerPlayNetHandler)netManager.getNetHandler()).player;
-		boolean isCapturedPacket = msg instanceof CPlayerTryUseItemPacket || msg instanceof CPlayerTryUseItemOnBlockPacket || msg instanceof CPlayerDiggingPacket;
+		ServerPlayer player = ((ServerGamePacketListenerImpl)netManager.getPacketListener()).player;
+		boolean isCapturedPacket = msg instanceof ServerboundUseItemPacket || msg instanceof ServerboundUseItemOnPacket || msg instanceof ServerboundPlayerActionPacket;
 
 		if (!PlayerTracker.hasPlayerData(player) || !isCapturedPacket || player.getServer() == null) {
 			// we don't need to handle this packet, just defer to the next handler in the pipeline
@@ -33,33 +33,33 @@ public class AimFixHandler extends ChannelInboundHandlerAdapter {
 		}
 
 		LogHelper.debug("Captured message {}", msg.getClass().getSimpleName());
-		player.getServer().runAsync(() -> {
+		player.getServer().submit(() -> {
 			// Save all the current orientation data
-			Vector3d oldPos = player.getPositionVec();
-			Vector3d oldPrevPos = new Vector3d(player.prevPosX, player.prevPosY, player.prevPosZ);
-			float oldPitch = player.rotationPitch;
-			float oldYaw = player.rotationYaw;
-			float oldYawHead = player.rotationYawHead;
-			float oldPrevPitch = player.prevRotationPitch;
-			float oldPrevYaw = player.prevRotationYaw;
-			float oldPrevYawHead = player.prevRotationYawHead;
+			Vec3 oldPos = player.position();
+			Vec3 oldPrevPos = new Vec3(player.xo, player.yo, player.zo);
+			float oldPitch = player.getXRot();
+			float oldYaw = player.getYRot();
+			float oldYawHead = player.yHeadRot;
+			float oldPrevPitch = player.xRotO;
+			float oldPrevYaw = player.yRotO;
+			float oldPrevYawHead = player.yHeadRotO;
 			float oldEyeHeight = player.eyeHeight;
 
 			VRPlayerData data = null;
 			if (PlayerTracker.hasPlayerData(player)) { // Check again in case of race condition
 				data = PlayerTracker.getPlayerDataAbsolute(player);
-				Vector3d pos = data.getController(0).getPos();
-				Vector3d aim = data.getController(0).getRot().multiply(new Vector3d(0, 0, -1));
+				Vec3 pos = data.getController(0).getPos();
+				Vec3 aim = data.getController(0).getRot().multiply(new Vec3(0, 0, -1));
 
 				// Inject our custom orientation data
-				player.setRawPosition(pos.x, pos.y, pos.z);
-				player.prevPosX = pos.x;
-				player.prevPosY = pos.y;
-				player.prevPosZ = pos.z;
-				player.rotationPitch = (float)Math.toDegrees(Math.asin(-aim.y));
-				player.rotationYaw = (float)Math.toDegrees(Math.atan2(-aim.x, aim.z));
-				player.prevRotationPitch = player.rotationPitch;
-				player.prevRotationYaw = player.prevRotationYawHead = player.rotationYawHead = player.rotationYaw;
+				player.setPosRaw(pos.x, pos.y, pos.z);
+				player.xo = pos.x;
+				player.yo = pos.y;
+				player.zo = pos.z;
+				player.setXRot((float)Math.toDegrees(Math.asin(-aim.y)));
+				player.setYRot((float)Math.toDegrees(Math.atan2(-aim.x, aim.z)));
+				player.xRotO = player.getXRot();
+				player.yRotO = player.yHeadRotO = player.yHeadRot = player.getYRot();
 				player.eyeHeight = 0;
 
 				// Set up offset to fix relative positions
@@ -70,10 +70,10 @@ public class AimFixHandler extends ChannelInboundHandlerAdapter {
 			// Call the packet handler directly
 			// This is several implementation details that we have to replicate
 			try {
-				if (netManager.isChannelOpen()) {
+				if (netManager.isConnected()) {
 					try {
-						((IPacket<INetHandler>)msg).processPacket(netManager.getNetHandler());
-					} catch (ThreadQuickExitException e) { // Apparently might get thrown and can be ignored
+						((Packet<PacketListener>)msg).handle(netManager.getPacketListener());
+					} catch (RunningOnDifferentThreadException e) { // Apparently might get thrown and can be ignored
 					}
 				}
 			} finally {
@@ -83,21 +83,21 @@ public class AimFixHandler extends ChannelInboundHandlerAdapter {
 			}
 
 			// Restore the original orientation data
-			player.setRawPosition(oldPos.x, oldPos.y, oldPos.z);
-			player.prevPosX = oldPrevPos.x;
-			player.prevPosY = oldPrevPos.y;
-			player.prevPosZ = oldPrevPos.z;
-			player.rotationPitch = oldPitch;
-			player.rotationYaw = oldYaw;
-			player.rotationYawHead = oldYawHead;
-			player.prevRotationPitch = oldPrevPitch;
-			player.prevRotationYaw = oldPrevYaw;
-			player.prevRotationYawHead = oldPrevYawHead;
+			player.setPosRaw(oldPos.x, oldPos.y, oldPos.z);
+			player.xo = oldPrevPos.x;
+			player.yo = oldPrevPos.y;
+			player.zo = oldPrevPos.z;
+			player.setXRot(oldPitch);
+			player.setYRot(oldYaw);
+			player.yHeadRot = oldYawHead;
+			player.xRotO = oldPrevPitch;
+			player.yRotO = oldPrevYaw;
+			player.yHeadRotO = oldPrevYawHead;
 			player.eyeHeight = oldEyeHeight;
 
 			// Reset offset
 			if (data != null)
-				data.offset = new Vector3d(0, 0, 0);
+				data.offset = new Vec3(0, 0, 0);
 		});
 	}
 }

@@ -3,14 +3,14 @@ package com.techjar.vivecraftforge.network;
 import com.techjar.vivecraftforge.util.LogHelper;
 
 import com.techjar.vivecraftforge.network.packet.*;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.simple.SimpleChannel;
 
 public class ChannelHandler {
 	private static SimpleChannel CHANNEL;
@@ -45,7 +45,7 @@ public class ChannelHandler {
 		CHANNEL.send(PacketDistributor.ALL.noArg(), message);
 	}
 
-	public static void sendTo(IPacket message, ServerPlayerEntity player) {
+	public static void sendTo(IPacket message, ServerPlayer player) {
 		CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), message);
 	}
 
@@ -53,19 +53,19 @@ public class ChannelHandler {
 		CHANNEL.send(PacketDistributor.NEAR.with(() -> point), message);
 	}
 
-	public static void sendToAllTrackingEntity(IPacket message, ServerPlayerEntity player) {
+	public static void sendToAllTrackingEntity(IPacket message, ServerPlayer player) {
 		CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), message);
 	}
 
-	public static void sendToAllTrackingEntityAndSelf(IPacket message, ServerPlayerEntity player) {
+	public static void sendToAllTrackingEntityAndSelf(IPacket message, ServerPlayer player) {
 		CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), message);
 	}
 
-	public static void sendToAllTrackingChunk(IPacket message, Chunk chunk) {
+	public static void sendToAllTrackingChunk(IPacket message, LevelChunk chunk) {
 		CHANNEL.send(PacketDistributor.TRACKING_CHUNK.with(() -> chunk), message);
 	}
 
-	public static void sendToAllInDimension(IPacket message, RegistryKey<World> dimension) {
+	public static void sendToAllInDimension(IPacket message, ResourceKey<Level> dimension) {
 		CHANNEL.send(PacketDistributor.DIMENSION.with(() -> dimension), message);
 	}
 
