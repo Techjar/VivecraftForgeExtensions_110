@@ -25,7 +25,7 @@ archivesBaseName = "VivecraftForgeExtensions-${mcversion}"
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = JavaVersion.VERSION_17
 
 minecraft {
-    mappings channel: 'official', version: '1.18.2'
+    mappings channel: 'official', version: '1.19.2'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 	
     runs {
@@ -82,7 +82,7 @@ minecraft {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.51'
+    minecraft 'net.minecraftforge:forge:1.19.2-43.0.7'
 }
 
 jar.finalizedBy('reobfJar')

@@ -11,10 +11,9 @@ import com.techjar.vivecraftforge.network.IPacket;
 import com.techjar.vivecraftforge.util.LogHelper;
 import com.techjar.vivecraftforge.util.PlayerTracker;
 import com.techjar.vivecraftforge.util.VRPlayerData;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.ChatType;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.network.NetworkEvent;
 
 /*
@@ -82,14 +81,14 @@ public class PacketVersion implements IPacket {
 			context.get().enqueueWork(() -> {
 				PlayerTracker.players.put(player.getGameProfile().getId(), new VRPlayerData());
 				if (Config.enableJoinMessages.get() && !Config.joinMessageVR.get().isEmpty())
-					player.getServer().getPlayerList().broadcastMessage(new TextComponent(String.format(Config.joinMessageVR.get(), player.getDisplayName())), ChatType.SYSTEM, net.minecraft.Util.NIL_UUID);
+					player.getServer().getPlayerList().broadcastSystemMessage(Component.literal(String.format(Config.joinMessageVR.get(), player.getDisplayName())), false);
 			});
 		} else {
 			LogHelper.info("Non-VR player joined: {}", message);
 			context.get().enqueueWork(() -> {
 				PlayerTracker.nonvrPlayers.add(player.getGameProfile().getId());
 				if (Config.enableJoinMessages.get() && !Config.joinMessageNonVR.get().isEmpty())
-					player.getServer().getPlayerList().broadcastMessage(new TextComponent(String.format(Config.joinMessageNonVR.get(), player.getDisplayName())), ChatType.SYSTEM, net.minecraft.Util.NIL_UUID);
+					player.getServer().getPlayerList().broadcastSystemMessage(Component.literal(String.format(Config.joinMessageNonVR.get(), player.getDisplayName())), false);
 			});
 		}
 	}

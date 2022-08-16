@@ -11,6 +11,7 @@ import com.techjar.vivecraftforge.util.LogHelper;
 import com.techjar.vivecraftforge.util.PlayerTracker;
 import com.techjar.vivecraftforge.util.Util;
 import com.techjar.vivecraftforge.util.VRPlayerData;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.goal.SwellGoal;
@@ -28,9 +29,8 @@ import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
@@ -65,7 +65,7 @@ public class EventHandlerServer {
 	@SubscribeEvent
 	public void onAttackEntity(AttackEntityEvent event) {
 		if (event.getTarget() instanceof Player) {
-			Player player = event.getPlayer();
+			Player player = event.getEntity();
 			Player target = (Player)event.getTarget();
 			if (PlayerTracker.hasPlayerData(player)) {
 				VRPlayerData data = PlayerTracker.getPlayerData(player);
@@ -107,7 +107,7 @@ public class EventHandlerServer {
 
 	@SubscribeEvent
 	public void onArrowLoose(ArrowLooseEvent event) {
-		Player player = event.getPlayer();
+		Player player = event.getEntity();
 		VRPlayerData data = PlayerTracker.getPlayerData(player);
 		if (data != null && !data.seated && data.bowDraw > 0) {
 			LogHelper.debug("Bow draw: " + data.bowDraw);
@@ -117,7 +117,7 @@ public class EventHandlerServer {
 
 	@SubscribeEvent
 	public void onLivingHurt(LivingHurtEvent event) {
-		LivingEntity target = event.getEntityLiving();
+		LivingEntity target = event.getEntity();
 		DamageSource source = event.getSource();
 		if (source.getDirectEntity() instanceof Arrow && source.getEntity() instanceof Player) {
 			Arrow arrow = (Arrow) source.getDirectEntity();
@@ -137,19 +137,19 @@ public class EventHandlerServer {
 	}
 
 	@SubscribeEvent
-	public void onEntityJoinWorld(EntityJoinWorldEvent event) {
+	public void onEntityJoinWorld(EntityJoinLevelEvent event) {
 		if (event.getEntity() instanceof ServerPlayer) {
 			final ServerPlayer player = (ServerPlayer)event.getEntity();
 			if (Config.vrOnly.get() && !player.hasPermissions(2)) {
 				Util.scheduler.schedule(() -> {
 					ServerLifecycleHooks.getCurrentServer().submit(() -> {
 						if (player.connection.getConnection().isConnected() && !PlayerTracker.hasPlayerData(player)) {
-							player.sendMessage(new TextComponent(Config.vrOnlyKickMessage.get()), net.minecraft.Util.NIL_UUID);
-							player.sendMessage(new TextComponent("If this is not a VR client, you will be kicked in " + Config.vrOnlyKickDelay.get() + " seconds."), net.minecraft.Util.NIL_UUID);
+							player.sendSystemMessage(Component.literal(Config.vrOnlyKickMessage.get()));
+							player.sendSystemMessage(Component.literal("If this is not a VR client, you will be kicked in " + Config.vrOnlyKickDelay.get() + " seconds."));
 							Util.scheduler.schedule(() -> {
 								ServerLifecycleHooks.getCurrentServer().submit(() -> {
 									if (player.connection.getConnection().isConnected() && !PlayerTracker.hasPlayerData(player)) {
-										player.connection.disconnect(new TextComponent(Config.vrOnlyKickMessage.get()));
+										player.connection.disconnect(Component.literal(Config.vrOnlyKickMessage.get()));
 									}
 								});
 							}, Math.round(Config.vrOnlyKickDelay.get() * 1000), TimeUnit.MILLISECONDS);
@@ -201,7 +201,7 @@ public class EventHandlerServer {
 			return;
 
 		VRPlayerData data = PlayerTracker.getPlayerDataAbsolute(event.getPlayer());
-		ItemEntity item = event.getEntityItem();
+		ItemEntity item = event.getEntity();
 
 		Vec3 pos = data.getController(0).getPos();
 		Vec3 aim = data.getController(0).getRot().multiply(new Vec3(0, 0, -1));
@@ -216,7 +216,7 @@ public class EventHandlerServer {
 
 	@SubscribeEvent
 	public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-		Connection netManager = ((ServerPlayer)event.getPlayer()).connection.getConnection();
+		Connection netManager = ((ServerPlayer)event.getEntity()).connection.getConnection();
 		netManager.channel().pipeline().addBefore("packet_handler", "vr_aim_fix", new AimFixHandler(netManager));
 	}
 
